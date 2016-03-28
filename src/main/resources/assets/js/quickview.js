@@ -32,7 +32,8 @@ NAV BAR CONTROLS
 	});
 
 	// Open file browser event
-	$('#qv-header-logo').on('click', function(e){		
+	$('#qv-header-logo').on('click', function(e){
+		loadFilesTree();	
 		$('#fileBrowser')
 			.css('opacity', 0)
 			.fadeIn('fast')
@@ -303,6 +304,37 @@ PRIVATE FUNCTIONS
 	function clearSearch(){
 		$('#qv-nav-search-container :input').val('');
 		clearHighlightSearch();
+	}
+
+	function loadFilesTree() {
+	    var data = {path: ''};
+	    $.ajax({
+	        type: 'POST',
+	        url: 'loadFilesTree',
+	        data: JSON.stringify(data),
+	        contentType: "application/json",
+	        success: function(returnedData) {
+	            $.each(returnedData, function(index, elements) {
+	                $.each(elements, function(index, elem) {
+	                    var name = elem.name;
+	                    var path = elem.path;
+	                    var size = elem.size;
+	                    var docType = elem.docType;
+	                    $('.qv-modal-table tbody').append(
+	                    	'<tr>'+
+								'<td><i class="fa fa-file-word-o"></i></td>'+
+								'<td>' + name + '</td>'+
+								'<td>' + docType + '</td>'+
+								'<td>' + size + ' KB</td>'+
+		                	'</tr>');
+	                });
+	            });
+	        },
+	        error: function(xhr, status, error) {
+              var err = eval("(" + xhr.responseText + ")");
+              console.log(err.Message);
+            }
+	    });
 	}
 
 });
