@@ -6,25 +6,3 @@
 http:
   port: 8080
   adminPort: 8081
-
-#Application path
-#Application path is used in application for receiving and sending requests
-#Path can be absolute, relative or null
-#applicationPath: http://127.0.0.1:8080
-#applicationPath: custom-url
-#Note: custom-url prefix will be used in addition to application and context path, ex: http://127.0.0.1:8080/custom-url
-#applicationPath: null
-#Note: null value will set default application request URI, in this case http://127.0.0.1:8080/
-applicationPath: null
-
-#Files path
-#Set root path for files and images
-#ATTENTION: Root path should contain files, otherwise file browser will be empty
-#Example: E:/Projects/GroupDocs/app/xFiles
-filesPath: D:/Projects/GroupDocs/Apps/xFiles
-
-#Licence path
-#Set path to licence file
-#ATTENTION: If you don't have a licence file leave licencePath as it is
-#Example: D:/Projects/GroupDocs/Apps/0-resources/licenses/groupdocs.viewer/GroupDocs.Viewer.Java.lic
-licensePath: null

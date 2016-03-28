@@ -1,0 +1,331 @@
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-sizing: border-box;
+}
+html {
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+body {
+    font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    background-color: #e7e7e7;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+}
+ul, li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+/*
+******************************************
+CONTAINER
+******************************************
+*/
+#qv-container{
+    width: 100%;
+    height: 600px;
+    margin: auto;
+}
+
+/*
+******************************************
+HEADER
+******************************************
+*/
+#qv-header{
+    width: 100%;
+    height: 50px;
+}
+
+/*
+******************************************
+LOGO
+******************************************
+*/
+#qv-header-logo{
+    width: 134px;
+    height: 12px;
+    background-repeat: no-repeat;
+    background-size: 100px 12px;
+    background-position: 15px 20px;
+    float: left;
+    padding: 25px 0px;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+/*
+******************************************
+NAV BUTTONS
+******************************************
+*/
+#qv-navbar{
+    margin-left: 10px;
+}
+#qv-navbar > li{
+    font-size: 14px;
+    float: left;
+    position: relative;
+    cursor: pointer;
+    padding: 19px 15px 17px 15px;
+}
+.qv-nav-separator{
+    width: 20px;
+    height: 100%;
+    margin: 0 !important;
+    cursor: default !important;
+}
+#qv-nav-right{
+    float: right !important;
+}
+.qv-nav-caret{
+    display: inline-block;
+    width: 0;
+    height: 0;
+    margin-left: 2px;
+    vertical-align: middle;
+    border-top: 4px dashed;
+    border-top: 4px solid \9;
+    border-right: 4px solid transparent;
+    border-left: 4px solid transparent;
+}
+.qv-nav-dropdown-menu{
+    position: absolute;
+    top: 49px;
+    left: 0;
+    z-index: 1000;
+    float: left;
+    min-width: 160px;
+    padding: 5px 0;
+    list-style: none;
+    font-size: 13px;
+    text-align: left;
+    background-color: #ffffff;
+    border: 1px solid #cccccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-clip: padding-box;
+    display: none;
+}
+.qv-nav-dropdown-menu li{
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    white-space: nowrap;
+}
+.qv-nav-dropdown-menu-separator{
+    height: 1px;
+    margin: 8px 0;
+    overflow: hidden;
+    background-color: #e5e5e5;
+    padding: 0 !important;
+}
+#qv-navbar .open{
+    color: #ffffff;
+}
+
+#qv-zoom-val-container{
+    min-width: 50px;
+}
+
+/*
+******************************************
+SEARCH
+******************************************
+*/
+#qv-nav-search-container{
+    min-width: 302px;
+    padding: 8px 0px 7px 7px;
+    position: absolute;
+    display: none;
+    right: 0px;
+    float: left;
+    top: 50px;
+    z-index: 1;
+}
+#qv-nav-search-container input[type='text']{
+    float: left;
+    border: 0;
+    height: 20px;
+    width: 215px;
+    padding: 5px;
+}
+#qv-nav-search-cancel{
+    color: #676767;
+    font-size: 14px;
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    margin-left: 200px;
+    margin-top: 3px;
+    float: left;
+}
+.qv-nav-search-btn{
+    float: left;
+    margin: 0px 10px;
+    padding: 3px 5px;
+}
+
+/*
+******************************************
+PAGES
+******************************************
+*/
+#qv-pages {
+    position: fixed;
+    width: 100%;
+    top: 50px;
+    bottom: 0;
+    overflow-x: hidden;
+    overflow-y: scroll!important;
+    padding-top: 20px;
+
+    /* Hides the scrollbar */
+    padding-right: 15px;
+    left: 15px;
+
+    transition:all 0.4s;
+    overflow: visible;
+}
+#qv-panzoom{
+    transform: none;
+    backface-visibility: hidden;
+    transform-origin: 50% 50% 0px;
+}
+.qv-page {
+    width: 700px;
+    height: 990px;
+    background-color: #ffffff;
+    margin: 0 auto 20px auto;
+
+    -webkit-box-shadow: 0px 4px 12px -4px rgba(0,0,0,0.38);
+    -moz-box-shadow: 0px 4px 12px -4px rgba(0,0,0,0.38);
+    box-shadow: 0px 4px 12px -4px rgba(0,0,0,0.38);
+}
+.qv-page .qv-wrapper {
+    padding: 80px 80px;
+}
+/*
+******************************************
+MODAL
+******************************************
+*/
+.qv-modal{
+    display: none;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1050;
+    -webkit-overflow-scrolling: touch;
+    outline: 0;
+    background-color: rgba(0,0,0,0.5);
+}
+.qv-modal-dialog{
+    position: relative;
+    width: 600px;
+    margin: 30px auto;
+    vertical-align: middle;
+}
+.qv-modal-content{
+    background-color: #ffffff;
+}
+.qv-modal-header{
+    padding: 1px 20px;
+}
+.qv-modal-close{
+    position: absolute;
+    right: 20px;
+    top: 16px;
+    font-size: 21px;
+    cursor: pointer;
+}
+.qv-modal-title{
+    font-size: 16px;
+    font-weight: 300;
+}
+.qv-modal-body{
+    background-color: #ffffff;
+    padding: 20px;
+    overflow-y: scroll;
+    max-height: 300px;
+}
+
+.qv-modal-table{
+    width: 100%;
+    text-align: left;
+}
+.qv-modal-table > tbody > tr > td{
+    font-size: 14px;
+    padding: 5px 0;
+}
+.qv-modal-table > tbody > tr > td:nth-child(2){
+    cursor: pointer;
+    max-width: 200px;
+    overflow: hidden;
+}
+.qv-modal-table td:nth-child(3), .qv-modal-table td:last-child{
+    font-size: 12px;
+}
+
+.qv-modal-footer{
+    height: 67px;
+}
+.qv-modal-footer > .btn{
+    float: right;
+    margin: 20px 15px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 12px;
+}
+/*
+******************************************
+Document types
+******************************************
+*/
+.fa-file-pdf-o {
+    color: #c11e07;
+}
+.fa-file-word-o {
+    color: #2a5699;
+}
+.fa-file-powerpoint-o {
+    color: #d24625;
+}
+.fa-file-excel-o {
+    color: #207245;
+}
+/*
+******************************************
+Fade annimation
+******************************************
+*/
+.qv-modal.fade .qv-modal-dialog {
+    -webkit-transform: translate(0, -25%);
+    -ms-transform: translate(0, -25%);
+    -o-transform: translate(0, -25%);
+    transform: translate(0, -25%);
+    -webkit-transition: -webkit-transform 0.3s ease-out;
+    -moz-transition: -moz-transform 0.3s ease-out;
+    -o-transition: -o-transform 0.3s ease-out;
+    transition: transform 0.3s ease-out;
+}
+.qv-modal.in .qv-modal-dialog {
+    -webkit-transform: translate(0, 0);
+    -ms-transform: translate(0, 0);
+    -o-transform: translate(0, 0);
+    transform: translate(0, 0);
+}
+
+.qv-highlight{
+    background-color: yellow;
+}
