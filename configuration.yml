@@ -1,8 +1,25 @@
-#Server configuration
-#Set available ports for application to use
-#Example: 
+################################################
+# Server configurations
+################################################
+
+# Set available ports for application to use
+# Example:
 # port: 8080
 # adminPort: 8081
 http:
   port: 8080
   adminPort: 8081
+
+
+################################################
+# Application configurations
+################################################
+
+# Directory where all original files are stored
+filesDirectory: /Users/Alex/Documents/GroupDocs/
+
+# Run application as service (only public API)
+runAsService: true
+
+# Absolute path to GroupDocs license file
+licensePath: /Users/Alex/Documents/GroupDocs.Viewer.lic

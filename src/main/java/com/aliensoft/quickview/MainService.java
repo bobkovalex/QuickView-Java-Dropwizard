@@ -26,7 +26,9 @@ public class MainService extends Service<QuickViewConfig>{
     @Override
     public void initialize(Bootstrap<QuickViewConfig> bootstrap) {
         bootstrap.setName("QuickView for Java");
+        // add assets bundle in order to get resources from assets directory
         bootstrap.addBundle(new AssetsBundle());
+        // init view bundle
         bootstrap.addBundle(new ViewBundle());
     }
 

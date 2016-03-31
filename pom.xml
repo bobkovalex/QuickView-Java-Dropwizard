@@ -19,6 +19,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.groupdocs</groupId>
+            <artifactId>groupdocs-viewer</artifactId>
+            <version>3.0.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-views</artifactId>
             <version>0.6.2</version>
