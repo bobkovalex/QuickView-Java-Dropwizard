@@ -2,6 +2,7 @@ package com.aliensoft.quickview.resources;
 
 import com.aliensoft.quickview.config.QuickViewConfig;
 import com.aliensoft.quickview.domain.web.MediaType;
+import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.aliensoft.quickview.domain.wrapper.FileDescriptionWrapper;
 import com.aliensoft.quickview.views.QuickView;
 import com.groupdocs.viewer.config.ViewerConfig;
@@ -51,6 +52,11 @@ public class QuickViewResource extends QuickViewResourcesBase{
         return new QuickView(quickViewConfig);
     }
 
+    /*
+    ***********************************************************
+    * FILE TREE
+    ***********************************************************
+    */
     @GET
     @Path(value = "/getFileTree")
     public Object getFileTree(@Context HttpServletRequest request, @Context HttpServletResponse response){
@@ -84,58 +90,114 @@ public class QuickViewResource extends QuickViewResourcesBase{
         return objectToJson(fileList);
     }
 
+    /*
+    ***********************************************************
+    * DOCUMENT DESCRIPTION
+    ***********************************************************
+    */
     @GET
     @Path(value = "/getDocumentDescription")
-    public Object getDocumentDescription(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
-        request.setAttribute("guid", "/Users/Alex/Documents/GroupDocs/10_page.doc");
-        return loadDocumentDescription(request, response);
+    public Object getDocumentDescription(@Context HttpServletRequest request, @Context HttpServletResponse response){
+        // set response content type
+        setResponseContentType(response, MediaType.APPLICATION_JSON);
+        try {
+            //set parameters
+            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventionss.pdf";
+            // get/set document description
+            DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
+            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
+            // return document description
+            return objectToJson(documentInfoContainer.getPages());
+        }catch (Exception ex){
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
+        }
     }
 
     @POST
     @Path(value = "/loadDocumentDescription")
-    public Object loadDocumentDescription(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
+    public Object loadDocumentDescription(@Context HttpServletRequest request, @Context HttpServletResponse response){
         // set response content type
         setResponseContentType(response, MediaType.APPLICATION_JSON);
-        // get request body
-        String requestBody = getRequestBody(request);
-        String documentGuid = getJsonString(requestBody, "guid");
-        // GET dummy values
-        if(documentGuid == null || documentGuid.isEmpty()){
-            documentGuid = request.getAttribute("guid").toString();
+        try {
+            // get request body
+            String requestBody = getRequestBody(request);
+            // get/set parameters
+            String documentGuid = getJsonString(requestBody, "guid");
+            // get/set document description
+            DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
+            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
+            // return document description
+            return objectToJson(documentInfoContainer.getPages());
+        }catch (Exception ex){
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
         }
-        // get document description
-        DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
-        DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
-
-        return objectToJson(documentInfoContainer.getPages());
     }
 
+    /*
+    ***********************************************************
+    * DOCUMENT PAGES
+    ***********************************************************
+    */
     @GET
     @Path(value = "/getDocumentPage")
-    public Object getDocumentPage(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
-        request.setAttribute("guid", "/Users/Alex/Documents/GroupDocs/10_page.doc");
-        request.setAttribute("pageNumber", 1);
-        return loadDocumentPage(request, response);
+    public Object getDocumentPage(@Context HttpServletRequest request, @Context HttpServletResponse response){
+        try {
+            // set response content type
+            setResponseContentType(response, MediaType.TEXT_HTML);
+            // set parameters
+            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventionss.pdf";
+            int pageNumber = 1;
+            int countPagesToConvert = 1;
+            // set options
+            HtmlOptions htmlOptions = new HtmlOptions();
+            htmlOptions.setPageNumber(pageNumber);
+            htmlOptions.setCountPagesToConvert(countPagesToConvert);
+            htmlOptions.setResourcesEmbedded(true);
+            // return html
+            return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
+        }catch (Exception ex){
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
+        }
     }
 
     @POST
     @Path(value = "/loadDocumentPage")
-    public Object loadDocumentPage(@Context HttpServletRequest request, @Context HttpServletResponse response) throws Exception {
-        // set response content type
-        setResponseContentType(response, MediaType.TEXT_HTML);
-        // get request body
-        String requestBody = getRequestBody(request);
-        String documentGuid = getJsonString(requestBody, "guid");
-        // GET dummy values
-        if(documentGuid == null || documentGuid.isEmpty()){
-            documentGuid = request.getAttribute("guid").toString();
+    public Object loadDocumentPage(@Context HttpServletRequest request, @Context HttpServletResponse response){
+        try {
+            // set response content type
+            setResponseContentType(response, MediaType.TEXT_HTML);
+            // get request body
+            String requestBody = getRequestBody(request);
+            // get/set parameters
+            String documentGuid = getJsonString(requestBody, "guid");
+            int pageNumber = getJsonInteger(requestBody, "page");
+            int countPagesToConvert = getJsonInteger(requestBody, "pageCount");
+            // set options
+            HtmlOptions htmlOptions = new HtmlOptions();
+            htmlOptions.setPageNumber(pageNumber);
+            htmlOptions.setCountPagesToConvert(countPagesToConvert);
+            htmlOptions.setResourcesEmbedded(true);
+            // return html
+            return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
+        }catch (Exception ex){
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
         }
-        int pageNumber = getJsonInteger(requestBody, "page");
-        HtmlOptions htmlOptions = new HtmlOptions();
-        htmlOptions.setPageNumber(pageNumber);
-        htmlOptions.setResourcesEmbedded(true);
-
-        return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
     }
 
 }
