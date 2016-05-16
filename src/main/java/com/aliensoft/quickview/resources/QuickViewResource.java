@@ -102,7 +102,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
         setResponseContentType(response, MediaType.APPLICATION_JSON);
         try {
             //set parameters
-            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventionss.pdf";
+            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventions.pdf";
             // get/set document description
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
             DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
@@ -151,7 +151,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // set response content type
             setResponseContentType(response, MediaType.TEXT_HTML);
             // set parameters
-            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventionss.pdf";
+            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventions.pdf";
             int pageNumber = 1;
             int countPagesToConvert = 1;
             // set options
@@ -182,11 +182,10 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
             int pageNumber = getJsonInteger(requestBody, "page");
-            int countPagesToConvert = getJsonInteger(requestBody, "pageCount");
             // set options
             HtmlOptions htmlOptions = new HtmlOptions();
             htmlOptions.setPageNumber(pageNumber);
-            htmlOptions.setCountPagesToConvert(countPagesToConvert);
+            htmlOptions.setCountPagesToConvert(1);
             htmlOptions.setResourcesEmbedded(true);
             // return html
             return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
