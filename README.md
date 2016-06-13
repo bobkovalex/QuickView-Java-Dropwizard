@@ -1,6 +1,7 @@
 #QuickView Dropwizard Sample
 ###### version 3.2.0
 
+<br/>
 ## Description
 Native, simple, fully configurable and optimized java document viewer application. Open and view your document without losing data and/or formatting.
 
@@ -10,6 +11,7 @@ This sample can be run as service with RESTful API or as standalone application 
 
 **Note** In order to get all benifits and to use all features without any limmitations you need to purchace valid [GroupDocs.Viewer for Java license](http://purchase.groupdocs.com/purchase/order-online-step-1-of-8.aspx) or request [GroupDocs.Viewer for Java temporary license](http://groupdocs.com/Community/getting-started/java/document-viewer-java-library.aspx).
 
+<br/>
 ## Instructions
 
 #### Run as RESTful Service
@@ -40,7 +42,7 @@ Running QuickView Dropwizard Sample as service will allow you to host your appli
 #### Run as Standalone Application
 Running QuickView Dropwizard Sample as standalone application is more simple and host all-in-one on single server, which will be accessible by all users directly.
 
-####### Features
+###### Features
 - Simple all-in-one application.
 - Allows to implement additional features in your application, such as user-roles, additional permissions, groups, etc.
 
