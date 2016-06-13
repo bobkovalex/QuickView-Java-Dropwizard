@@ -39,9 +39,7 @@ public class QuickViewConfig extends Configuration{
         this.runAsService = runAsService;
     }
 
-    public String getLicensePath() {
-        return licensePath;
-    }
+    public String getLicensePath() { return licensePath; }
 
     public void setLicensePath(String licensePath) {
         this.licensePath = licensePath;

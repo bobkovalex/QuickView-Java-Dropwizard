@@ -6,7 +6,7 @@
 
     <groupId>com.aliensoft</groupId>
     <artifactId>quickview</artifactId>
-    <version>3.0.0</version>
+    <version>3.2.0</version>
     <packaging>jar</packaging>
 
     <name>QuickView Dropwizard</name>
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-viewer</artifactId>
-            <version>3.0.0</version>
+            <version>3.2.0</version>
             <type>jar</type>
         </dependency>
         <dependency>

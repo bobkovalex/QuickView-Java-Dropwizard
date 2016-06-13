@@ -15,11 +15,11 @@ http:
 # Application configurations
 ################################################
 
-# Directory where all original files are stored
-filesDirectory: /Users/Alex/Documents/GroupDocs/
-
 # Run application as service (only public API)
 runAsService: true
 
 # Absolute path to GroupDocs license file
 licensePath: /Users/Alex/Documents/GroupDocs.Viewer.lic
+
+# Directory where all original files are stored
+filesDirectory: /Users/Alex/Documents/GroupDocs/
