@@ -40,6 +40,9 @@ public class QuickViewResource extends QuickViewResourcesBase{
         ViewerConfig config = new ViewerConfig();
         config.setStoragePath(quickViewConfig.getFilesDirectory());
         config.setUseCache(true);
+        config.getFontDirectories().add(quickViewConfig.getFontsDirectory());
+        System.out.println(quickViewConfig.getFontsDirectory());
+        // set GroupDocs license
         License license = new License();
         license.setLicense(quickViewConfig.getLicensePath());
         // initialize viewer instance
@@ -128,6 +131,11 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentGuid = getJsonString(requestBody, "guid");
             // get/set document description
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
+            System.out.println(documentInfoOptions.getCellsDocumentInfoOptions());
+            System.out.println(documentInfoOptions.getEmailDocumentInfoOptions());
+            System.out.println(documentInfoOptions.getGuid());
+            System.out.println(documentInfoOptions.getPassword());
+            System.out.println(documentInfoOptions.getWordsDocumentInfoOptions());
             DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
             // return document description
             return objectToJson(documentInfoContainer.getPages());

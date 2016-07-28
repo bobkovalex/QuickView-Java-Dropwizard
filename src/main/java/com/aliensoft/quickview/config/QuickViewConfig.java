@@ -23,6 +23,10 @@ public class QuickViewConfig extends Configuration{
     @JsonProperty
     private String licensePath;
 
+    @Valid
+    @JsonProperty
+    private String fontsDirectory;
+
     public String getFilesDirectory() {
         return filesDirectory;
     }
@@ -44,4 +48,8 @@ public class QuickViewConfig extends Configuration{
     public void setLicensePath(String licensePath) {
         this.licensePath = licensePath;
     }
+
+    public String getFontsDirectory() { return fontsDirectory; }
+
+    public void setFontsDirectory(String fontsDirectory) { this.fontsDirectory = fontsDirectory; }
 }

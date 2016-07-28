@@ -23,3 +23,6 @@ licensePath: /Users/Alex/Documents/GroupDocs.Viewer.lic
 
 # Directory where all original files are stored
 filesDirectory: /Users/Alex/Documents/GroupDocs/
+
+# Directory all custom fonts are stored
+fontsDirectory: /Users/Alex/Projects/Fonts/CustomFonts/
