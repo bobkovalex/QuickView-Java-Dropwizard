@@ -30,7 +30,7 @@ Running QuickView Dropwizard Sample as service will allow you to host your appli
 3. Navigate to QuickView Dropwizard Sample root directory.
 4. Update `configuration.yml` file by setting `runAsService: true`.
 5. Open console and type `cd 'QuickView Dropwizard Sample root directory'`, press enter.
-6. In console type following command `mvn clean compile java:exec`, press enter.
+6. In console type following command `mvn clean compile exec:java`, press enter.
 7. Download [QuickView](https://github.com/LilAlex/QuickView).
 8. Extract QuickView to desired/work directory (if downloaded as zip).
 9. Navigate to QuickView root directory.
@@ -52,5 +52,5 @@ Running QuickView Dropwizard Sample as standalone application is more simple and
 3. Navigate to QuickView Dropwizard Sample root directory.
 4. Update `configuration.yml` file by setting `runAsService: false`.
 5. Open console and type `cd 'QuickView Dropwizard Sample root directory'`, press enter.
-6. In console type following command `mvn clean compile java:exec`, press enter.
+6. In console type following command `mvn clean compile exec:java`, press enter.
 7. Go to `localhost:PORT`, PORT - port number specified in `configuration.yml` (by default http://localhost:8080).
