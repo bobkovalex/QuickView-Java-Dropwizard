@@ -2,6 +2,12 @@
 ###### version 3.2.2
 
 <br/>
+## System Requirements
+- Java 8 (JDK 1.8)
+- Maven 3
+
+
+<br/>
 ## Description
 Native, simple, fully configurable and optimized java document viewer application. Open and view your document without losing data and/or formatting.
 
