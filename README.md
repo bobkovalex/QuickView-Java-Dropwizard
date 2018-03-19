@@ -1,13 +1,13 @@
-#QuickView Dropwizard Sample
+# QuickView Dropwizard Sample
 ###### version 3.2.2
 
-<br/>
+
 ## System Requirements
 - Java 8 (JDK 1.8)
 - Maven 3
 
 
-<br/>
+
 ## Description
 Native, simple, fully configurable and optimized java document viewer application. Open and view your document without losing data and/or formatting.
 
@@ -17,7 +17,7 @@ This sample can be run as service with RESTful API or as standalone application 
 
 **Note** In order to get all benifits and to use all features without any limmitations you need to purchace valid [GroupDocs.Viewer for Java license](http://purchase.groupdocs.com/purchase/order-online-step-1-of-8.aspx) or request [GroupDocs.Viewer for Java temporary license](http://groupdocs.com/Community/getting-started/java/document-viewer-java-library.aspx).
 
-<br/>
+
 ## Instructions
 
 #### Run as RESTful Service
