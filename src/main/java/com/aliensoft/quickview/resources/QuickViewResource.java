@@ -71,31 +71,34 @@ public class QuickViewResource extends QuickViewResourcesBase{
     public Object loadFileTree(@Context HttpServletRequest request, @Context HttpServletResponse response){
         // set response content type
         setResponseContentType(response, MediaType.APPLICATION_JSON);
-        // get request body
-        String requestBody = getRequestBody(request);
-        String relDirPath = getJsonString(requestBody, "path");
-        // get file list from storage path
-        //FileTreeOptions fileTreeOptions = new FileTreeOptions(relDirPath);
-        FileListContainer fileTreeContainer = null;
         try {
+            // get request body
+            String requestBody = getRequestBody(request);
+            String relDirPath = getJsonString(requestBody, "path");
+            // get file list from storage path
+            //FileTreeOptions fileTreeOptions = new FileTreeOptions(relDirPath);
+            FileListContainer fileTreeContainer = null;
             fileTreeContainer = viewerHtmlHandler.getFileList();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
+            // parse file lists
+            for(FileDescription fd : fileTreeContainer.getFiles()){
+                FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
+                fileDescription.setGuid(fd.getGuid());
+                fileDescription.setName(fd.getName());
+                fileDescription.setDocType(fd.getDocumentType());
+                fileDescription.setDirectory(fd.isDirectory());
+                fileDescription.setSize(fd.getSize());
+                // add object to array list
+                fileList.add(fileDescription);
+            }
 
-        ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
-        // parse file lists
-        for(FileDescription fd : fileTreeContainer.getFiles()){
-            FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
-            fileDescription.setGuid(fd.getGuid());
-            fileDescription.setName(fd.getName());
-            fileDescription.setDocType(fd.getDocumentType());
-            fileDescription.setDirectory(fd.isDirectory());
-            fileDescription.setSize(fd.getSize());
-            // add object to array list
-            fileList.add(fileDescription);
+            return objectToJson(fileList);
+        }catch (Exception ex){
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
         }
-        return objectToJson(fileList);
     }
 
     /*
