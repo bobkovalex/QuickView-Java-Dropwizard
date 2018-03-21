@@ -192,6 +192,10 @@ Search highlight
 PAGES
 ******************************************
 */
+.wrapper {
+    display: flex;
+    align-items: stretch;
+}
 #qv-pages {
     position: fixed;
     /* width: 100%; */
@@ -369,4 +373,32 @@ Fade annimation
     -ms-transform: translate(0, 0);
     -o-transform: translate(0, 0);
     transform: translate(0, 0);
+}
+/*
+******************************************
+Thumbnails pannel
+******************************************
+*/
+#sidebar.active {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 100vh;
+    display: block;
+    margin-top: 15px;
+    position: relative;
+    z-index: 999;
+}
+
+#sidebar {
+    display: none;
+    margin-left: -250px;
+    background: #3e4e5a;
+}
+
+.qv-wrapper-thumbnail {
+    padding: 0;
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 300vh;
+    max-height: 300vh;
 }

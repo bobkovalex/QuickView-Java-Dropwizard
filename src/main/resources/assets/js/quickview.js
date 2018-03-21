@@ -362,13 +362,52 @@ NAV BAR CONTROLS
 		});
 		setSearchMatchCount(search_position, getTotalSearchMatches());
 	});
-	
 
+
+    //////////////////////////////////////////////////
+    // Make thumbnails panel collapsible
+    //////////////////////////////////////////////////
+    $('#qv-nav-right').on('click', function () {
+        $('#sidebar').toggleClass('active');
+        loadDocumentThumbnails();
+    });
 /*
 ******************************************************************
 FUNCTIONS
 ******************************************************************
 */
+
+    //////////////////////////////////////////////////
+    // Load document thumbnails
+    //////////////////////////////////////////////////
+    function loadDocumentThumbnails() {
+        var data = {guid: documentGuid};
+        // get data
+        $.ajax({
+            type: 'POST',
+            url: getApplicationPath('loadDocumentThumbnails'),
+            data: JSON.stringify(data),
+            contentType: "application/json",
+            success: function(returnedData) {
+                if(returnedData.error != undefined){
+                    // open error popup
+                    printMessage(returnedData.error);
+                    return;
+                }
+                // append thumbnails to the Thumbnail panel
+                $.each(returnedData, function(index, elem){
+                    // append thumbnail
+                    $('#thumbnail').append(
+                        '<div class="qv-wrapper-thumbnail">' + $.parseHTML( elem )[4].innerText + '</div>'
+					)
+                });
+            },
+            error: function(xhr, status, error) {
+                var err = eval("(" + xhr.responseText + ")");
+                console.log(err.Message);
+            }
+        });
+    }
 
 	//////////////////////////////////////////////////
 	// Load file tree from server
@@ -883,25 +922,40 @@ HTML MARKUP
 */
 	function getHtmlBase(){
 		return '<div id="qv-container">'+
-				// header BEGIN
-				'<div id="qv-header">'+
-					'<div id="qv-header-logo"></div>'+
-					// nav bar BEGIN
-					'<ul id="' + qv_navbar.slice(1) + '">'+
-						// nav bar content	
-					'</ul>'+
-					// nav bar END
-				'</div>'+
-				// header END
+					// header BEGIN
+					'<div id="qv-header">'+
+						'<div id="qv-header-logo"></div>'+
+						// nav bar BEGIN
+						'<ul id="' + qv_navbar.slice(1) + '">'+
+							// nav bar content
+						'</ul>'+
+						// nav bar END
+					'</div>'+
+					// header END
 
-				// pages BEGIN
-				'<div id="qv-pages">'+
-					'<div id="qv-panzoom">'+
-						// list of pages
-			    	'</div>'+
-			    '</div>'+
-			    // pages END
-			'</div>';
+					// pages BEGIN
+					'<div id="qv-pages">'+
+						'<div id="qv-panzoom">'+
+							// list of pages
+						'</div>'+
+					'</div>'+
+					// Thumbnails panel BEGIN
+					'<md-sidenav md-component-id="left" hide-print md-whiteframe="4" class="md-sidenav-left">'+
+						'<md-tabs md-dynamic-height md-border-bottom>'+
+							'<md-tab label="Thumbnails">'+
+								'<md-content role="navigation">'+
+									'<div ng-controller="ThumbnailsController">'+
+										'<md-card id="thumbnail" class="thumbnail">'+
+											// Thumbnail will be added here automatycaly when panel opens.
+										'</md-card>'+
+									'</div>'+
+								'</md-content>'+
+							'</md-tab>'+
+						'</md-tabs>'+
+					// thumbnails panel END
+					'</md-sidenav>'+
+				// pages END
+				'</div>';
 	}
 
 	function getHtmlModalDialog(){
@@ -998,6 +1052,7 @@ HTML MARKUP
 	}
 
 	function getHtmlNavThumbTogglePanel(){
+
 		return '<li id="qv-nav-right"><i class="fa fa-th-large"></i></li>';
 	}
 

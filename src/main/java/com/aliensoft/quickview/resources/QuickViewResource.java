@@ -5,13 +5,15 @@ import com.aliensoft.quickview.domain.web.MediaType;
 import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.aliensoft.quickview.domain.wrapper.FileDescriptionWrapper;
 import com.aliensoft.quickview.views.QuickView;
+import com.google.gson.Gson;
 import com.groupdocs.viewer.config.ViewerConfig;
 import com.groupdocs.viewer.converter.options.HtmlOptions;
 import com.groupdocs.viewer.domain.FileDescription;
 import com.groupdocs.viewer.domain.containers.DocumentInfoContainer;
-import com.groupdocs.viewer.domain.containers.FileTreeContainer;
+import com.groupdocs.viewer.domain.containers.FileListContainer;
+import com.groupdocs.viewer.domain.html.PageHtml;
 import com.groupdocs.viewer.domain.options.DocumentInfoOptions;
-import com.groupdocs.viewer.domain.options.FileTreeOptions;
+import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
 import com.groupdocs.viewer.licensing.License;
 
@@ -22,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * QuickView
@@ -71,26 +74,34 @@ public class QuickViewResource extends QuickViewResourcesBase{
     public Object loadFileTree(@Context HttpServletRequest request, @Context HttpServletResponse response){
         // set response content type
         setResponseContentType(response, MediaType.APPLICATION_JSON);
-        // get request body
-        String requestBody = getRequestBody(request);
-        String relDirPath = getJsonString(requestBody, "path");
-        // get file list from storage path
-        FileTreeOptions fileTreeOptions = new FileTreeOptions(relDirPath);
-        FileTreeContainer fileTreeContainer = viewerHtmlHandler.loadFileTree(fileTreeOptions);
+        try {
+            // get request body
+            String requestBody = getRequestBody(request);
+            String relDirPath = getJsonString(requestBody, "path");
+            // get file list from storage path
+            FileListOptions fileTreeOptions = new FileListOptions(relDirPath);
+            FileListContainer fileTreeContainer = null;
+            fileTreeContainer = viewerHtmlHandler.getFileList(fileTreeOptions);
+            ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
+            // parse file lists
+            for(FileDescription fd : fileTreeContainer.getFiles()){
+                FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
+                fileDescription.setGuid(fd.getGuid());
+                fileDescription.setName(fd.getName());
+                fileDescription.setDocType(fd.getDocumentType());
+                fileDescription.setDirectory(fd.isDirectory());
+                fileDescription.setSize(fd.getSize());
+                // add object to array list
+                fileList.add(fileDescription);
+            }
 
-        ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
-        // parse file lists
-        for(FileDescription fd : fileTreeContainer.getFileTree()){
-            FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
-            fileDescription.setGuid(fd.getGuid());
-            fileDescription.setName(fd.getName());
-            fileDescription.setDocType(fd.getDocumentType());
-            fileDescription.setDirectory(fd.isDirectory());
-            fileDescription.setSize(fd.getSize());
-            // add object to array list
-            fileList.add(fileDescription);
+            return objectToJson(fileList);
+        }catch (Exception ex){
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
         }
-        return objectToJson(fileList);
     }
 
     /*
@@ -104,11 +115,13 @@ public class QuickViewResource extends QuickViewResourcesBase{
         // set response content type
         setResponseContentType(response, MediaType.APPLICATION_JSON);
         try {
-            //set parameters
-            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventions.pdf";
+            // get request body
+            String requestBody = getRequestBody(request);
+            // set parameters
+            String documentGuid = getJsonString(requestBody, "guid");
             // get/set document description
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
-            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
+            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
             // return document description
             return objectToJson(documentInfoContainer.getPages());
         }catch (Exception ex){
@@ -131,12 +144,13 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentGuid = getJsonString(requestBody, "guid");
             // get/set document description
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
-            System.out.println(documentInfoOptions.getCellsDocumentInfoOptions());
-            System.out.println(documentInfoOptions.getEmailDocumentInfoOptions());
-            System.out.println(documentInfoOptions.getGuid());
+            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
+            System.out.println(documentInfoOptions.getCellsOptions());
+            System.out.println(documentInfoOptions.getEmailOptions());
+            System.out.println(documentInfoContainer.getGuid());
             System.out.println(documentInfoOptions.getPassword());
-            System.out.println(documentInfoOptions.getWordsDocumentInfoOptions());
-            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
+            System.out.println(documentInfoOptions.getWordsOptions());
+
             // return document description
             return objectToJson(documentInfoContainer.getPages());
         }catch (Exception ex){
@@ -158,14 +172,16 @@ public class QuickViewResource extends QuickViewResourcesBase{
         try {
             // set response content type
             setResponseContentType(response, MediaType.TEXT_HTML);
-            // set parameters
-            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventions.pdf";
+            // get request body
+            String requestBody = getRequestBody(request);
+            // get/set parameters
+            String documentGuid = getJsonString(requestBody, "guid");
             int pageNumber = 1;
             int countPagesToConvert = 1;
             // set options
             HtmlOptions htmlOptions = new HtmlOptions();
             htmlOptions.setPageNumber(pageNumber);
-            htmlOptions.setCountPagesToConvert(countPagesToConvert);
+            htmlOptions.setCountPagesToRender(countPagesToConvert);
             htmlOptions.setResourcesEmbedded(true);
             // return html
             return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
@@ -193,7 +209,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // set options
             HtmlOptions htmlOptions = new HtmlOptions();
             htmlOptions.setPageNumber(pageNumber);
-            htmlOptions.setCountPagesToConvert(1);
+            htmlOptions.setCountPagesToRender(1);
             htmlOptions.setResourcesEmbedded(true);
             // return html
             return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
@@ -207,4 +223,37 @@ public class QuickViewResource extends QuickViewResourcesBase{
         }
     }
 
+    /*
+     ***********************************************************
+     * DOCUMENT THUMBNAILS
+     ***********************************************************
+     */
+    @POST
+    @Path(value = "/loadDocumentThumbnails")
+    public Object loadDocumentThumbnails(@Context HttpServletRequest request, @Context HttpServletResponse response){
+        try {
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // get request body
+            String requestBody = getRequestBody(request);
+            // get/set parameters
+            String documentGuid = getJsonString(requestBody, "guid");
+            // set options
+            HtmlOptions htmlOptions = new HtmlOptions();
+            List<PageHtml> pagesHtml = viewerHtmlHandler.getPages(documentGuid, htmlOptions);
+            ArrayList thumbnails = new ArrayList<>();
+            for (PageHtml html:pagesHtml) {
+                thumbnails.add(html.getHtmlContent());
+            }
+            // return html
+            return new Gson().toJson(thumbnails);
+        }catch (Exception ex){
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
+        }
+    }
 }
