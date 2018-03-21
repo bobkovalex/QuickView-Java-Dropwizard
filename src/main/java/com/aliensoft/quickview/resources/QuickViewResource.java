@@ -9,9 +9,9 @@ import com.groupdocs.viewer.config.ViewerConfig;
 import com.groupdocs.viewer.converter.options.HtmlOptions;
 import com.groupdocs.viewer.domain.FileDescription;
 import com.groupdocs.viewer.domain.containers.DocumentInfoContainer;
-import com.groupdocs.viewer.domain.containers.FileTreeContainer;
+import com.groupdocs.viewer.domain.containers.FileListContainer;
 import com.groupdocs.viewer.domain.options.DocumentInfoOptions;
-import com.groupdocs.viewer.domain.options.FileTreeOptions;
+import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
 import com.groupdocs.viewer.licensing.License;
 
@@ -75,22 +75,29 @@ public class QuickViewResource extends QuickViewResourcesBase{
         String requestBody = getRequestBody(request);
         String relDirPath = getJsonString(requestBody, "path");
         // get file list from storage path
-        FileTreeOptions fileTreeOptions = new FileTreeOptions(relDirPath);
-        FileTreeContainer fileTreeContainer = viewerHtmlHandler.loadFileTree(fileTreeOptions);
+        FileListOptions fileListOptions = new FileListOptions(relDirPath);
+        try{
+            FileListContainer fileListContainer = viewerHtmlHandler.getFileList(fileListOptions);
 
-        ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
-        // parse file lists
-        for(FileDescription fd : fileTreeContainer.getFileTree()){
-            FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
-            fileDescription.setGuid(fd.getGuid());
-            fileDescription.setName(fd.getName());
-            fileDescription.setDocType(fd.getDocumentType());
-            fileDescription.setDirectory(fd.isDirectory());
-            fileDescription.setSize(fd.getSize());
-            // add object to array list
-            fileList.add(fileDescription);
+            ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
+            // parse file lists
+            for(FileDescription fd : fileListContainer.getFiles()){
+                FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
+                fileDescription.setGuid(fd.getGuid());
+                fileDescription.setName(fd.getName());
+                fileDescription.setDocType(fd.getDocumentType());
+                fileDescription.setDirectory(fd.isDirectory());
+                fileDescription.setSize(fd.getSize());
+                // add object to array list
+                fileList.add(fileDescription);
+            }
+            return objectToJson(fileList);
+        }catch (Exception ex){
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
         }
-        return objectToJson(fileList);
     }
 
     /*
@@ -108,7 +115,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventions.pdf";
             // get/set document description
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
-            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
+            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
             // return document description
             return objectToJson(documentInfoContainer.getPages());
         }catch (Exception ex){
@@ -131,12 +138,12 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentGuid = getJsonString(requestBody, "guid");
             // get/set document description
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
-            System.out.println(documentInfoOptions.getCellsDocumentInfoOptions());
-            System.out.println(documentInfoOptions.getEmailDocumentInfoOptions());
-            System.out.println(documentInfoOptions.getGuid());
+            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
+            System.out.println(documentInfoOptions.getCellsOptions());
+            System.out.println(documentInfoOptions.getEmailOptions());
+            System.out.println(documentInfoContainer.getGuid());
             System.out.println(documentInfoOptions.getPassword());
-            System.out.println(documentInfoOptions.getWordsDocumentInfoOptions());
-            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentInfoOptions);
+            System.out.println(documentInfoOptions.getWordsOptions());
             // return document description
             return objectToJson(documentInfoContainer.getPages());
         }catch (Exception ex){
@@ -165,7 +172,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // set options
             HtmlOptions htmlOptions = new HtmlOptions();
             htmlOptions.setPageNumber(pageNumber);
-            htmlOptions.setCountPagesToConvert(countPagesToConvert);
+            htmlOptions.setCountPagesToRender(countPagesToConvert);
             htmlOptions.setResourcesEmbedded(true);
             // return html
             return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
@@ -193,7 +200,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // set options
             HtmlOptions htmlOptions = new HtmlOptions();
             htmlOptions.setPageNumber(pageNumber);
-            htmlOptions.setCountPagesToConvert(1);
+            htmlOptions.setCountPagesToRender(1);
             htmlOptions.setResourcesEmbedded(true);
             // return html
             return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
