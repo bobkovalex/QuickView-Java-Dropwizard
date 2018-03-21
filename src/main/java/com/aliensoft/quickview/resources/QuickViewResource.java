@@ -1,18 +1,20 @@
 package com.aliensoft.quickview.resources;
 
 import com.aliensoft.quickview.config.QuickViewConfig;
+import com.aliensoft.quickview.domain.web.MediaType;
+import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.aliensoft.quickview.domain.wrapper.FileDescriptionWrapper;
 import com.aliensoft.quickview.views.QuickView;
+import com.google.gson.Gson;
 import com.groupdocs.viewer.config.ViewerConfig;
 import com.groupdocs.viewer.converter.options.HtmlOptions;
 import com.groupdocs.viewer.domain.FileDescription;
 import com.groupdocs.viewer.domain.containers.DocumentInfoContainer;
 import com.groupdocs.viewer.domain.containers.FileListContainer;
+import com.groupdocs.viewer.domain.html.PageHtml;
 import com.groupdocs.viewer.domain.options.DocumentInfoOptions;
+import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
-import com.aliensoft.quickview.domain.web.MediaType;
-
-import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.groupdocs.viewer.licensing.License;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * QuickView
@@ -76,9 +79,9 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String requestBody = getRequestBody(request);
             String relDirPath = getJsonString(requestBody, "path");
             // get file list from storage path
-            //FileTreeOptions fileTreeOptions = new FileTreeOptions(relDirPath);
+            FileListOptions fileTreeOptions = new FileListOptions(relDirPath);
             FileListContainer fileTreeContainer = null;
-            fileTreeContainer = viewerHtmlHandler.getFileList();
+            fileTreeContainer = viewerHtmlHandler.getFileList(fileTreeOptions);
             ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
             // parse file lists
             for(FileDescription fd : fileTreeContainer.getFiles()){
@@ -220,4 +223,37 @@ public class QuickViewResource extends QuickViewResourcesBase{
         }
     }
 
+    /*
+     ***********************************************************
+     * DOCUMENT THUMBNAILS
+     ***********************************************************
+     */
+    @POST
+    @Path(value = "/loadDocumentThumbnails")
+    public Object loadDocumentThumbnails(@Context HttpServletRequest request, @Context HttpServletResponse response){
+        try {
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // get request body
+            String requestBody = getRequestBody(request);
+            // get/set parameters
+            String documentGuid = getJsonString(requestBody, "guid");
+            // set options
+            HtmlOptions htmlOptions = new HtmlOptions();
+            List<PageHtml> pagesHtml = viewerHtmlHandler.getPages(documentGuid, htmlOptions);
+            ArrayList thumbnails = new ArrayList<>();
+            for (PageHtml html:pagesHtml) {
+                thumbnails.add(html.getHtmlContent());
+            }
+            // return html
+            return new Gson().toJson(thumbnails);
+        }catch (Exception ex){
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
+        }
+    }
 }
