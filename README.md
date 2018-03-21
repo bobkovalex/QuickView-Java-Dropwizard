@@ -1,5 +1,5 @@
 # QuickView Dropwizard Sample
-###### version 3.2.2
+###### version 17.5.2
 
 
 ## System Requirements
