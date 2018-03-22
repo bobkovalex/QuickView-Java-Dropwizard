@@ -4,11 +4,20 @@
 
 # Set available ports for application to use
 # Example:
-# port: 8080
-# adminPort: 8081
-http:
-  port: 8080
-  adminPort: 8081
+# server:
+#  applicationConnectors:
+#   - type: http
+#      port: 8080
+#  adminConnectors:
+#     - type: http
+#        port: 8081
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+      - type: http
+        port: 8081
 
 
 ################################################

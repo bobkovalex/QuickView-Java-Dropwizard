@@ -1,7 +1,7 @@
 package com.aliensoft.quickview.views;
 
 import com.aliensoft.quickview.config.QuickViewConfig;
-import com.yammer.dropwizard.views.View;
+import io.dropwizard.views.View;
 import java.nio.charset.Charset;
 
 /**
