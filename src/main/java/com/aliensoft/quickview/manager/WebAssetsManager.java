@@ -20,7 +20,8 @@ public class WebAssetsManager {
         File tempDirectory = new File("temp");
 
         // Project resources directory
-        String outResourcesPath = "src/main/resources/assets";
+        //String projectAssetsPath = "src/main/resources/assets";
+        String targetAssetsPath = "target/classes/assets";
 
         // Download zip file
         System.out.println("DOWNLOADING FILES...");
@@ -36,13 +37,17 @@ public class WebAssetsManager {
 
         // Clean project's resources directory
         System.out.println("CLEANING RESOURCE DIRECTORY...");
-        clean(outResourcesPath);
+        //clean(projectAssetsPath);
+        clean(targetAssetsPath);
         System.out.println("OK!");
         System.out.println();
 
         // Copy downloaded resources to project directory
         System.out.println("COPYING FILES...");
-        copy(inResourcesPath, outResourcesPath);
+        // Copy files to project directory (as backup)
+        //copy(inResourcesPath, projectAssetsPath);
+        // Copy files to target directory to get latest changes without an application restart
+        copy(inResourcesPath, targetAssetsPath);
         System.out.println("OK!");
         System.out.println();
 
