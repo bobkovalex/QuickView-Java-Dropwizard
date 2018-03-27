@@ -25,7 +25,7 @@ server:
 ################################################
 
 # Run application as service (only public API)
-runAsService: true
+runAsService: false
 
 # Absolute path to GroupDocs license file
 licensePath: /Users/Alex/Documents/GroupDocs.Viewer.lic
@@ -35,3 +35,7 @@ filesDirectory: /Users/Alex/Documents/GroupDocs/
 
 # Directory all custom fonts are stored
 fontsDirectory: /Users/Alex/Projects/Fonts/CustomFonts/
+
+# Url/link to web resources (html, js, css, etc) archive
+# Required when runAsService: false
+resourcesUrl: https://github.com/bobkovalex/QuickView/archive/master.zip

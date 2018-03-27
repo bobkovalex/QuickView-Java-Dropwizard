@@ -2,6 +2,7 @@ package com.aliensoft.quickview;
 
 import com.aliensoft.quickview.config.QuickViewConfig;
 import com.aliensoft.quickview.health.TemplateHealthCheck;
+import com.aliensoft.quickview.manager.WebAssetsManager;
 import com.aliensoft.quickview.resources.QuickViewResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
@@ -45,8 +46,16 @@ public class MainService extends Application<QuickViewConfig> {
 
         // Add URL mapping
         cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
+
+        // Get web resources for standalone mode
+        if(!config.getRunAsService()){
+            WebAssetsManager webAssetsManager = new WebAssetsManager();
+            webAssetsManager.update(config.getResourcesUrl());
+        }
+
         // Initiate QuickView
         environment.jersey().register(new QuickViewResource(config));
+
         // Add dummy health check to get rid of console warnings
         // TODO: implement health check
         final TemplateHealthCheck healthCheck = new TemplateHealthCheck("");
