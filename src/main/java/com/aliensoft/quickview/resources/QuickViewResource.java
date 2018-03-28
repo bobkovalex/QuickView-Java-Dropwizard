@@ -5,11 +5,13 @@ import com.aliensoft.quickview.domain.web.MediaType;
 import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.aliensoft.quickview.domain.wrapper.FileDescriptionWrapper;
 import com.aliensoft.quickview.views.QuickView;
+import com.google.gson.Gson;
 import com.groupdocs.viewer.config.ViewerConfig;
 import com.groupdocs.viewer.converter.options.HtmlOptions;
 import com.groupdocs.viewer.domain.FileDescription;
 import com.groupdocs.viewer.domain.containers.DocumentInfoContainer;
 import com.groupdocs.viewer.domain.containers.FileListContainer;
+import com.groupdocs.viewer.domain.html.PageHtml;
 import com.groupdocs.viewer.domain.options.DocumentInfoOptions;
 import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
@@ -22,6 +24,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * QuickView
@@ -33,6 +36,7 @@ import java.util.ArrayList;
 public class QuickViewResource extends QuickViewResourcesBase{
     private final QuickViewConfig quickViewConfig;
     private final ViewerHtmlHandler viewerHtmlHandler;
+    //private final ViewerImageHandler viewerImageHandler;
 
     public QuickViewResource(QuickViewConfig quickViewConfig){
         this.quickViewConfig = quickViewConfig;
@@ -45,8 +49,10 @@ public class QuickViewResource extends QuickViewResourcesBase{
         // set GroupDocs license
         License license = new License();
         license.setLicense(quickViewConfig.getLicensePath());
-        // initialize viewer instance
+        // initialize viewer instance for the HTML mode
         viewerHtmlHandler = new ViewerHtmlHandler(config);
+        // initialize viewer instance for the thumbanils
+        //viewerImageHandler = new ViewerImageHandler(config);
     }
 
     @GET
@@ -213,5 +219,78 @@ public class QuickViewResource extends QuickViewResourcesBase{
             return objectToJson(errorMsgWrapper);
         }
     }
+
+    /*
+     ***********************************************************
+     * DOCUMENT THUMBNAILS HTML MODE
+     ***********************************************************
+     */
+    @POST
+    @Path(value = "/loadThumbnails")
+    public Object loadThumbnails(@Context HttpServletRequest request, @Context HttpServletResponse response){
+        try {
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // get request body
+            String requestBody = getRequestBody(request);
+            // get/set parameters
+            String documentGuid = getJsonString(requestBody, "guid");
+            // set options
+            HtmlOptions htmlOptions = new HtmlOptions();
+            htmlOptions.setResourcesEmbedded(true);
+            ArrayList<String> thumbnails = new ArrayList<>();
+            // get pages
+            List<PageHtml> pages = viewerHtmlHandler.getPages(documentGuid);
+            // Get thumbnails HTML
+            for(PageHtml page : pages){
+                thumbnails.add(page.getHtmlContent());
+            }
+            return new Gson().toJson(thumbnails);
+        }catch (Exception ex){
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
+        }
+    }
+
+    /*
+    ***********************************************************
+    * DOCUMENT THUMBNAILS IMAGE MODE
+    ***********************************************************
+    */
+//    @POST
+//    @Path(value = "/loadThumbnails")
+//    public Object loadThumbnails(@Context HttpServletRequest request, @Context HttpServletResponse response){
+//        try {
+//            // set response content type
+//            setResponseContentType(response, MediaType.APPLICATION_JSON);
+//            // get request body
+//            String requestBody = getRequestBody(request);
+//            // get/set parameters
+//            String documentGuid = getJsonString(requestBody, "guid");
+//            ArrayList<String> thumbnails = new ArrayList<>();
+//            // get pages
+//            List<PageImage> pages = viewerImageHandler.getPages(documentGuid);
+//            // Get thumbnails streams
+//            for(PageImage page : pages){
+//                // convert image InputStream into ByteArray
+//                byte[] bytes = IOUtils.toByteArray(page.getStream());
+//                // encode ByteArray into String
+//                String incodedImage = new String(Base64.getEncoder().encode(bytes));
+//                thumbnails.add(incodedImage);
+//            }
+//            return new Gson().toJson(thumbnails);
+//        }catch (Exception ex){
+//            // set response content type
+//            setResponseContentType(response, MediaType.APPLICATION_JSON);
+//            // set exception message
+//            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+//            errorMsgWrapper.setError(ex.getMessage());
+//            return objectToJson(errorMsgWrapper);
+//        }
+//    }
 
 }
