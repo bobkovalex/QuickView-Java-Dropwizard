@@ -11,11 +11,13 @@ import com.groupdocs.viewer.converter.options.HtmlOptions;
 import com.groupdocs.viewer.domain.FileDescription;
 import com.groupdocs.viewer.domain.containers.DocumentInfoContainer;
 import com.groupdocs.viewer.domain.containers.FileListContainer;
-import com.groupdocs.viewer.domain.html.PageHtml;
 import com.groupdocs.viewer.domain.options.DocumentInfoOptions;
 import com.groupdocs.viewer.domain.options.FileListOptions;
+import com.groupdocs.viewer.domain.options.RotatePageOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
 import com.groupdocs.viewer.licensing.License;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,7 +26,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 
 /**
  * QuickView
@@ -222,12 +224,12 @@ public class QuickViewResource extends QuickViewResourcesBase{
 
     /*
      ***********************************************************
-     * DOCUMENT THUMBNAILS HTML MODE
+     * PAGES ROTATION
      ***********************************************************
      */
     @POST
-    @Path(value = "/loadThumbnails")
-    public Object loadThumbnails(@Context HttpServletRequest request, @Context HttpServletResponse response){
+    @Path(value = "/rotate")
+    public Object rotate(@Context HttpServletRequest request, @Context HttpServletResponse response){
         try {
             // set response content type
             setResponseContentType(response, MediaType.APPLICATION_JSON);
@@ -235,17 +237,20 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String requestBody = getRequestBody(request);
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
-            // set options
-            HtmlOptions htmlOptions = new HtmlOptions();
-            htmlOptions.setResourcesEmbedded(true);
-            ArrayList<String> thumbnails = new ArrayList<>();
-            // get pages
-            List<PageHtml> pages = viewerHtmlHandler.getPages(documentGuid);
-            // Get thumbnails HTML
-            for(PageHtml page : pages){
-                thumbnails.add(page.getHtmlContent());
+            int angle =  Integer.parseInt(getJsonString(requestBody, "angle"));
+            JSONArray pages = new JSONObject(requestBody).getJSONArray("pages");
+
+            HashMap<String, String> rotatedPages = new HashMap<String, String>();
+            // Set rotation angle 90
+            for(int i = 0; i < pages.length(); i++) {
+                int pageNumber = Integer.parseInt(pages.get(i).toString());
+                RotatePageOptions rotateOptions = new RotatePageOptions(pageNumber, angle);
+                // Perform page rotation
+                viewerHtmlHandler.rotatePage(documentGuid, rotateOptions);
+                // return html
+                rotatedPages.put(String.valueOf(pageNumber), String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle()));
             }
-            return new Gson().toJson(thumbnails);
+            return new Gson().toJson(rotatedPages);
         }catch (Exception ex){
             // set response content type
             setResponseContentType(response, MediaType.APPLICATION_JSON);
@@ -255,42 +260,4 @@ public class QuickViewResource extends QuickViewResourcesBase{
             return objectToJson(errorMsgWrapper);
         }
     }
-
-    /*
-    ***********************************************************
-    * DOCUMENT THUMBNAILS IMAGE MODE
-    ***********************************************************
-    */
-//    @POST
-//    @Path(value = "/loadThumbnails")
-//    public Object loadThumbnails(@Context HttpServletRequest request, @Context HttpServletResponse response){
-//        try {
-//            // set response content type
-//            setResponseContentType(response, MediaType.APPLICATION_JSON);
-//            // get request body
-//            String requestBody = getRequestBody(request);
-//            // get/set parameters
-//            String documentGuid = getJsonString(requestBody, "guid");
-//            ArrayList<String> thumbnails = new ArrayList<>();
-//            // get pages
-//            List<PageImage> pages = viewerImageHandler.getPages(documentGuid);
-//            // Get thumbnails streams
-//            for(PageImage page : pages){
-//                // convert image InputStream into ByteArray
-//                byte[] bytes = IOUtils.toByteArray(page.getStream());
-//                // encode ByteArray into String
-//                String incodedImage = new String(Base64.getEncoder().encode(bytes));
-//                thumbnails.add(incodedImage);
-//            }
-//            return new Gson().toJson(thumbnails);
-//        }catch (Exception ex){
-//            // set response content type
-//            setResponseContentType(response, MediaType.APPLICATION_JSON);
-//            // set exception message
-//            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-//            errorMsgWrapper.setError(ex.getMessage());
-//            return objectToJson(errorMsgWrapper);
-//        }
-//    }
-
 }
