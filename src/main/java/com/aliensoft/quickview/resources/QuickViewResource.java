@@ -4,6 +4,7 @@ import com.aliensoft.quickview.config.QuickViewConfig;
 import com.aliensoft.quickview.domain.web.MediaType;
 import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.aliensoft.quickview.domain.wrapper.FileDescriptionWrapper;
+import com.aliensoft.quickview.domain.wrapper.RotatedPageWrapper;
 import com.aliensoft.quickview.views.QuickView;
 import com.google.gson.Gson;
 import com.groupdocs.viewer.config.ViewerConfig;
@@ -25,8 +26,8 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
+import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * QuickView
@@ -84,6 +85,9 @@ public class QuickViewResource extends QuickViewResourcesBase{
         String relDirPath = getJsonString(requestBody, "path");
         // get file list from storage path
         FileListOptions fileListOptions = new FileListOptions(relDirPath);
+        // get not allowed for view elements
+        String tempFolderName =  new ViewerConfig().getCacheFolderName();
+
         try{
             FileListContainer fileListContainer = viewerHtmlHandler.getFileList(fileListOptions);
 
@@ -92,7 +96,14 @@ public class QuickViewResource extends QuickViewResourcesBase{
             for(FileDescription fd : fileListContainer.getFiles()){
                 FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
                 fileDescription.setGuid(fd.getGuid());
-                fileDescription.setName(fd.getName());
+                // check if current element can be shown to user
+                File hiddenFile = new File(fileDescription.getGuid());
+                if(tempFolderName.equals(fd.getName())
+                        || hiddenFile.isHidden()) {
+                    continue;
+                } else {
+                    fileDescription.setName(fd.getName());
+                }
                 fileDescription.setDocType(fd.getDocumentType());
                 fileDescription.setDirectory(fd.isDirectory());
                 fileDescription.setSize(fd.getSize());
@@ -228,8 +239,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
      ***********************************************************
      */
     @POST
-    @Path(value = "/rotate")
-    public Object rotate(@Context HttpServletRequest request, @Context HttpServletResponse response){
+    @Path(value = "/rotateDocumentPages")
+    public Object rotateDocumentPages(@Context HttpServletRequest request, @Context HttpServletResponse response){
         try {
             // set response content type
             setResponseContentType(response, MediaType.APPLICATION_JSON);
@@ -239,16 +250,22 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentGuid = getJsonString(requestBody, "guid");
             int angle =  Integer.parseInt(getJsonString(requestBody, "angle"));
             JSONArray pages = new JSONObject(requestBody).getJSONArray("pages");
-
-            HashMap<String, String> rotatedPages = new HashMap<String, String>();
-            // Set rotation angle 90
+            // a list of the rotated pages info
+            ArrayList<RotatedPageWrapper> rotatedPages = new ArrayList<RotatedPageWrapper>();
+            // rotate pages
             for(int i = 0; i < pages.length(); i++) {
+                // prepare reotated page info object
+                RotatedPageWrapper rotatedPage = new RotatedPageWrapper();
                 int pageNumber = Integer.parseInt(pages.get(i).toString());
                 RotatePageOptions rotateOptions = new RotatePageOptions(pageNumber, angle);
                 // Perform page rotation
                 viewerHtmlHandler.rotatePage(documentGuid, rotateOptions);
-                // return html
-                rotatedPages.put(String.valueOf(pageNumber), String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle()));
+                // set rotated page info for results
+                rotatedPage.setPageNumber(pageNumber);
+                String resultAngle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
+                rotatedPage.setAngle(resultAngle);
+                // add rotated page in to the resulting array
+                rotatedPages.add(rotatedPage);
             }
             return new Gson().toJson(rotatedPages);
         }catch (Exception ex){
