@@ -39,8 +39,11 @@ import java.util.ArrayList;
 public class QuickViewResource extends QuickViewResourcesBase{
     private final QuickViewConfig quickViewConfig;
     private final ViewerHtmlHandler viewerHtmlHandler;
-    //private final ViewerImageHandler viewerImageHandler;
 
+    /**
+     * Constructor
+     * @param quickViewConfig config object
+     */
     public QuickViewResource(QuickViewConfig quickViewConfig){
         this.quickViewConfig = quickViewConfig;
         // create viewer application configuration
@@ -55,23 +58,22 @@ public class QuickViewResource extends QuickViewResourcesBase{
         viewerHtmlHandler = new ViewerHtmlHandler(config);
     }
 
+    /**
+     * Get and set index page
+     * @return html view
+     */
     @GET
     public QuickView getView(){
         // initiate index page
         return new QuickView(quickViewConfig);
     }
 
-    /*
-    ***********************************************************
-    * FILE TREE
-    ***********************************************************
-    */
-    @GET
-    @Path(value = "/getFileTree")
-    public Object getFileTree(@Context HttpServletRequest request, @Context HttpServletResponse response){
-        return loadFileTree(request, response);
-    }
-
+    /**
+     * Get files and directories
+     * @param request
+     * @param response
+     * @return files and directories list
+     */
     @POST
     @Path(value = "/loadFileTree")
     public Object loadFileTree(@Context HttpServletRequest request, @Context HttpServletResponse response){
@@ -82,27 +84,29 @@ public class QuickViewResource extends QuickViewResourcesBase{
         String relDirPath = getJsonString(requestBody, "path");
         // get file list from storage path
         FileListOptions fileListOptions = new FileListOptions(relDirPath);
-        // get not allowed for view elements
-        String tempFolderName =  new ViewerConfig().getCacheFolderName();
-
+        // get temp directory name
+        String tempDirectoryName =  new ViewerConfig().getCacheFolderName();
         try{
             FileListContainer fileListContainer = viewerHtmlHandler.getFileList(fileListOptions);
 
             ArrayList<FileDescriptionWrapper> fileList = new ArrayList<>();
-            // parse file lists
+            // parse files/folders list
             for(FileDescription fd : fileListContainer.getFiles()){
                 FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
                 fileDescription.setGuid(fd.getGuid());
-                // check if current element can be shown to user
-                File hiddenFile = new File(fileDescription.getGuid());
-                if(tempFolderName.equals(fd.getName())
-                        || hiddenFile.isHidden()) {
+                // check if current file/folder is temp directory or is hidden
+                if(tempDirectoryName.equals(fd.getName()) || new File(fileDescription.getGuid()).isHidden()) {
+                    // ignore current file and skip to next one
                     continue;
                 } else {
+                    // set file/folder name
                     fileDescription.setName(fd.getName());
                 }
+                // set file type
                 fileDescription.setDocType(fd.getDocumentType());
+                // set is directory true/false
                 fileDescription.setDirectory(fd.isDirectory());
+                // set file size
                 fileDescription.setSize(fd.getSize());
                 // add object to array list
                 fileList.add(fileDescription);
@@ -116,32 +120,12 @@ public class QuickViewResource extends QuickViewResourcesBase{
         }
     }
 
-    /*
-    ***********************************************************
-    * DOCUMENT DESCRIPTION
-    ***********************************************************
-    */
-    @GET
-    @Path(value = "/getDocumentDescription")
-    public Object getDocumentDescription(@Context HttpServletRequest request, @Context HttpServletResponse response){
-        // set response content type
-        setResponseContentType(response, MediaType.APPLICATION_JSON);
-        try {
-            //set parameters
-            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventions.pdf";
-            // get/set document description
-            DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
-            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
-            // return document description
-            return objectToJson(documentInfoContainer.getPages());
-        }catch (Exception ex){
-            // set exception message
-            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-            errorMsgWrapper.setError(ex.getMessage());
-            return objectToJson(errorMsgWrapper);
-        }
-    }
-
+    /**
+     * Get document description
+     * @param request
+     * @param response
+     * @return document description
+     */
     @POST
     @Path(value = "/loadDocumentDescription")
     public Object loadDocumentDescription(@Context HttpServletRequest request, @Context HttpServletResponse response){
@@ -152,14 +136,10 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String requestBody = getRequestBody(request);
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
-            // get/set document description
+            // get document info options
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
+            // get document info container
             DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
-            System.out.println(documentInfoOptions.getCellsOptions());
-            System.out.println(documentInfoOptions.getEmailOptions());
-            System.out.println(documentInfoContainer.getGuid());
-            System.out.println(documentInfoOptions.getPassword());
-            System.out.println(documentInfoOptions.getWordsOptions());
             // return document description
             return objectToJson(documentInfoContainer.getPages());
         }catch (Exception ex){
@@ -170,38 +150,12 @@ public class QuickViewResource extends QuickViewResourcesBase{
         }
     }
 
-    /*
-    ***********************************************************
-    * DOCUMENT PAGES
-    ***********************************************************
-    */
-    @GET
-    @Path(value = "/getDocumentPage")
-    public Object getDocumentPage(@Context HttpServletRequest request, @Context HttpServletResponse response){
-        try {
-            // set response content type
-            setResponseContentType(response, MediaType.TEXT_HTML);
-            // set parameters
-            String documentGuid = "/Users/Alex/Documents/GroupDocs/java-codeconventions.pdf";
-            int pageNumber = 1;
-            int countPagesToConvert = 1;
-            // set options
-            HtmlOptions htmlOptions = new HtmlOptions();
-            htmlOptions.setPageNumber(pageNumber);
-            htmlOptions.setCountPagesToRender(countPagesToConvert);
-            htmlOptions.setResourcesEmbedded(true);
-            // return html
-            return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
-        }catch (Exception ex){
-            // set response content type
-            setResponseContentType(response, MediaType.APPLICATION_JSON);
-            // set exception message
-            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-            errorMsgWrapper.setError(ex.getMessage());
-            return objectToJson(errorMsgWrapper);
-        }
-    }
-
+    /**
+     * Get document page
+     * @param request
+     * @param response
+     * @return document page
+     */
     @POST
     @Path(value = "/loadDocumentPage")
     public Object loadDocumentPage(@Context HttpServletRequest request, @Context HttpServletResponse response){
@@ -230,10 +184,11 @@ public class QuickViewResource extends QuickViewResourcesBase{
         }
     }
 
-    /*
-     ***********************************************************
-     * PAGES ROTATION
-     ***********************************************************
+    /**
+     * Rotate page(s)
+     * @param request
+     * @param response
+     * @return rotated pages list (each obejct contains page number and rotated angle information)
      */
     @POST
     @Path(value = "/rotateDocumentPages")
@@ -251,17 +206,18 @@ public class QuickViewResource extends QuickViewResourcesBase{
             ArrayList<RotatedPageWrapper> rotatedPages = new ArrayList<RotatedPageWrapper>();
             // rotate pages
             for(int i = 0; i < pages.length(); i++) {
-                // prepare reotated page info object
+                // prepare rotated page info object
                 RotatedPageWrapper rotatedPage = new RotatedPageWrapper();
                 int pageNumber = Integer.parseInt(pages.get(i).toString());
                 RotatePageOptions rotateOptions = new RotatePageOptions(pageNumber, angle);
-                // Perform page rotation
+                // perform page rotation
                 viewerHtmlHandler.rotatePage(documentGuid, rotateOptions);
-                // set rotated page info for results
+                // add rotated page number
                 rotatedPage.setPageNumber(pageNumber);
+                // add rotated page angle
                 String resultAngle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
                 rotatedPage.setAngle(resultAngle);
-                // add rotated page in to the resulting array
+                // add rotated page object into resulting list
                 rotatedPages.add(rotatedPage);
             }
             return new Gson().toJson(rotatedPages);

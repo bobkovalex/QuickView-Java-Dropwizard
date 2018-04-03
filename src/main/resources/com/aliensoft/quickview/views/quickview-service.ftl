@@ -84,15 +84,6 @@
 
         <div id="qvs-service-api-container">
             <h4>Service API</h4>
-            <h5>GET Requests</h5>
-            <ul>
-                <li><a href ="/viewer/getFileTree" target="_blank">/getFileTree</a></li>
-            </ul>
-            <h5>GET Requests (Dummy)</h5>
-                <ul>
-                    <li><a href ="/viewer/getDocumentDescription" target="_blank">/getDocumentDescription</a></li>
-                    <li><a href ="/viewer/getDocumentPage" target="_blank">/getDocumentPage</a></li>
-                </ul>
             <h5>POST Requests</h5>
             <ul>
                 <li><a href ="/viewer/loadFileTree" target="_blank">/loadFileTree</a></li>
