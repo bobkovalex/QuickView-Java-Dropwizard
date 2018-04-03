@@ -97,6 +97,7 @@
                 <li><a href ="/loadFileTree" target="_blank">/loadFileTree</a></li>
                 <li><a href ="/loadDocumentDescription" target="_blank">/loadDocumentDescription</a></li>
                 <li><a href ="/loadDocumentPage" target="_blank">/loadDocumentPage</a></li>
+                <li><a href ="/rotateDocumentPages" target="_blank">/rotateDocumentPages</a></li>
             </ul>
         </div>
 
