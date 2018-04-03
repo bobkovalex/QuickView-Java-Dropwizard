@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * @author Alex Bobkov
  */
 
-@Path(value = "")
+@Path(value = "/viewer")
 public class QuickViewResource extends QuickViewResourcesBase{
     private final QuickViewConfig quickViewConfig;
     private final ViewerHtmlHandler viewerHtmlHandler;
@@ -48,14 +48,11 @@ public class QuickViewResource extends QuickViewResourcesBase{
         config.setStoragePath(quickViewConfig.getFilesDirectory());
         config.setUseCache(true);
         config.getFontDirectories().add(quickViewConfig.getFontsDirectory());
-        System.out.println(quickViewConfig.getFontsDirectory());
         // set GroupDocs license
         License license = new License();
         license.setLicense(quickViewConfig.getLicensePath());
         // initialize viewer instance for the HTML mode
         viewerHtmlHandler = new ViewerHtmlHandler(config);
-        // initialize viewer instance for the thumbanils
-        //viewerImageHandler = new ViewerImageHandler(config);
     }
 
     @GET

@@ -13,7 +13,7 @@
         <div id="element"></div>
         <script type="text/javascript">
             $('#element').quickView({
-                applicationPath: 'http://localhost:8080/',
+                applicationPath: 'http://localhost:8080/viewer',
                 preloadPageCount: 0,
                 zoom : true,
                 pageSelector: true,

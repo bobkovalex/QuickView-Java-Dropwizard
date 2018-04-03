@@ -77,7 +77,8 @@
         <div id="qvs-service-info-container">
             <h4>Current Configuration</h4>
             <ul>
-                <li><span>filesDirectory: </span>${filesDirectory}</li>
+                <li><span>Files: </span>${filesDirectory}</li>
+                <li><span>Fonts: </span>${fontsDirectory}</li>
             </ul>
         </div>
 
@@ -85,19 +86,19 @@
             <h4>Service API</h4>
             <h5>GET Requests</h5>
             <ul>
-                <li><a href ="/getFileTree" target="_blank">/getFileTree</a></li>
+                <li><a href ="/viewer/getFileTree" target="_blank">/getFileTree</a></li>
             </ul>
             <h5>GET Requests (Dummy)</h5>
                 <ul>
-                    <li><a href ="/getDocumentDescription" target="_blank">/getDocumentDescription</a></li>
-                    <li><a href ="/getDocumentPage" target="_blank">/getDocumentPage</a></li>
+                    <li><a href ="/viewer/getDocumentDescription" target="_blank">/getDocumentDescription</a></li>
+                    <li><a href ="/viewer/getDocumentPage" target="_blank">/getDocumentPage</a></li>
                 </ul>
             <h5>POST Requests</h5>
             <ul>
-                <li><a href ="/loadFileTree" target="_blank">/loadFileTree</a></li>
-                <li><a href ="/loadDocumentDescription" target="_blank">/loadDocumentDescription</a></li>
-                <li><a href ="/loadDocumentPage" target="_blank">/loadDocumentPage</a></li>
-                <li><a href ="/rotateDocumentPages" target="_blank">/rotateDocumentPages</a></li>
+                <li><a href ="/viewer/loadFileTree" target="_blank">/loadFileTree</a></li>
+                <li><a href ="/viewer/loadDocumentDescription" target="_blank">/loadDocumentDescription</a></li>
+                <li><a href ="/viewer/loadDocumentPage" target="_blank">/loadDocumentPage</a></li>
+                <li><a href ="/viewer/rotateDocumentPages" target="_blank">/rotateDocumentPages</a></li>
             </ul>
         </div>
 
