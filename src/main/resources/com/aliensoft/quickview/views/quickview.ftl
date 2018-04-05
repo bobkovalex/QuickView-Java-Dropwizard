@@ -5,6 +5,7 @@
         <title>QuickView for Java Dropwizard</title>
         <link type="text/css" rel="stylesheet" href="assets/css/font-awesome.min.css"/>
         <link type="text/css" rel="stylesheet" href="assets/css/quickview.css"/>
+        <link type="text/css" rel="stylesheet" href="assets/css/quickview.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="assets/css/quickview-dark.css"/>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
         <script type="text/javascript" src="assets/js/quickview.js"></script>
