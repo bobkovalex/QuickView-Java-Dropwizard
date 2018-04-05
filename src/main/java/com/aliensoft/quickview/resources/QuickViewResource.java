@@ -20,6 +20,7 @@ import com.groupdocs.viewer.licensing.License;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -27,6 +28,11 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import java.io.File;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.OutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -228,6 +234,43 @@ public class QuickViewResource extends QuickViewResourcesBase{
             ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
             errorMsgWrapper.setError(ex.getMessage());
             return objectToJson(errorMsgWrapper);
+        }
+    }
+
+    /**
+     * Download document
+     * @param request
+     * @param response
+     */
+    @GET
+    @Path(value = "/downloadDocument")
+    public void downloadDocument(@Context HttpServletRequest request, @Context HttpServletResponse response) throws ServletException, IOException {
+        int bytesRead = 0;
+        int count = 0;
+        byte[] buff = new byte[16 * 1024];
+        OutputStream out = response.getOutputStream();
+        // set response content type
+        setResponseContentType(response, MediaType.APPLICATION_OCTET_STREAM);
+        // get document path
+        String documentGuid = request.getParameter("path");
+        String fileName = new File(documentGuid).getName();
+        // set response content disposition
+        response.setHeader("Content-disposition", "attachment; filename=" + fileName);
+        BufferedOutputStream outStream = null;
+        BufferedInputStream inputStream = null;
+        try {
+            // download the document
+            inputStream = new BufferedInputStream(new FileInputStream(documentGuid));
+            outStream = new BufferedOutputStream(out);
+            while((count = inputStream.read(buff)) != -1) {
+                outStream.write(buff, 0, count);
+            }
+        } finally {
+            // close streams
+            if (inputStream != null)
+                inputStream.close();
+            if (outStream != null)
+                outStream.close();
         }
     }
 }
