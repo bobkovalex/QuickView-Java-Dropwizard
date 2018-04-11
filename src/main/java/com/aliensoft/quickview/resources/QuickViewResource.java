@@ -5,6 +5,7 @@ import com.aliensoft.quickview.domain.web.MediaType;
 import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.aliensoft.quickview.domain.wrapper.FileDescriptionWrapper;
 import com.aliensoft.quickview.domain.wrapper.RotatedPageWrapper;
+import com.aliensoft.quickview.domain.wrapper.UploadedDocumentWrapper;
 import com.aliensoft.quickview.views.QuickView;
 import com.google.gson.Gson;
 import com.groupdocs.viewer.config.ViewerConfig;
@@ -17,12 +18,16 @@ import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.domain.options.RotatePageOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
 import com.groupdocs.viewer.licensing.License;
+import org.apache.commons.io.FilenameUtils;
+import org.eclipse.jetty.server.Request;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -33,6 +38,10 @@ import java.io.BufferedOutputStream;
 import java.io.OutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
 /**
@@ -271,6 +280,55 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 inputStream.close();
             if (outStream != null)
                 outStream.close();
+        }
+    }
+
+    /**
+     * Upload document
+     * @param request
+     * @param response
+     * @return uploaded document object (the object contains uploaded document guid)
+     */
+    @POST
+    @Path(value = "/uploadDocument")
+    public Object uploadDocument(@Context HttpServletRequest request, @Context HttpServletResponse response) {
+        try {
+            // set multipart configuration
+            MultipartConfigElement multipartConfigElement = new MultipartConfigElement((String) null);
+            request.setAttribute(Request.__MULTIPART_CONFIG_ELEMENT, multipartConfigElement);
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // get the file chosen by the user
+            Part filePart = request.getPart("file");
+            // get document URL
+            String documentUrl = request.getParameter("url");
+            InputStream uploadedInputStream = null;
+            String fileName = "";
+            if(documentUrl.isEmpty() || documentUrl == null) {
+                // get the InputStream to store the file
+                uploadedInputStream = filePart.getInputStream();
+                fileName = filePart.getSubmittedFileName();
+            } else {
+                // get the InputStream from the URL
+                URL url =  new URL(documentUrl);
+                uploadedInputStream = url.openStream();
+                fileName = FilenameUtils.getName(url.getPath());
+            }
+            // get documents storage path
+            String documentStoragePath = quickViewConfig.getFilesDirectory();
+            // save the file
+            File file = new File(documentStoragePath + "/" + fileName);
+            Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            UploadedDocumentWrapper uploadedDocument = new UploadedDocumentWrapper();
+            uploadedDocument.setGuid(documentStoragePath + "/" + fileName);
+            return objectToJson(uploadedDocument);
+        }catch(Exception ex){
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setError(ex.getMessage());
+            return objectToJson(errorMsgWrapper);
         }
     }
 }
