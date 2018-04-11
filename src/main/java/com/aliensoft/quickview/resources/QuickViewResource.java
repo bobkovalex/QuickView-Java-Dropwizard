@@ -17,6 +17,9 @@ import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.domain.options.RotatePageOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
 import com.groupdocs.viewer.licensing.License;
+import io.dropwizard.jetty.ConnectorFactory;
+import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.server.SimpleServerFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -27,12 +30,14 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
-import java.io.File;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.OutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 /**
@@ -50,16 +55,22 @@ public class QuickViewResource extends QuickViewResourcesBase{
      * Constructor
      * @param quickViewConfig config object
      */
-    public QuickViewResource(QuickViewConfig quickViewConfig){
+    public QuickViewResource(QuickViewConfig quickViewConfig) throws UnknownHostException {
         this.quickViewConfig = quickViewConfig;
+        // set HTTP port
+        SimpleServerFactory serverFactory = (SimpleServerFactory) quickViewConfig.getServerFactory();
+        ConnectorFactory connector = serverFactory.getConnector();
+        quickViewConfig.getServer().setHttpPort(((HttpConnectorFactory) connector).getPort());
+        // set host address
+        quickViewConfig.getServer().setHostAddress(InetAddress.getLocalHost().getHostAddress());
         // create viewer application configuration
         ViewerConfig config = new ViewerConfig();
-        config.setStoragePath(quickViewConfig.getFilesDirectory());
+        config.setStoragePath(quickViewConfig.getApplication().getFilesDirectory());
         config.setUseCache(true);
-        config.getFontDirectories().add(quickViewConfig.getFontsDirectory());
+        config.getFontDirectories().add(quickViewConfig.getApplication().getFontsDirectory());
         // set GroupDocs license
         License license = new License();
-        license.setLicense(quickViewConfig.getLicensePath());
+        license.setLicense(quickViewConfig.getApplication().getLicensePath());
         // initialize viewer instance for the HTML mode
         viewerHtmlHandler = new ViewerHtmlHandler(config);
     }

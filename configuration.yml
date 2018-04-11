@@ -2,40 +2,29 @@
 # Server configurations
 ################################################
 
-# Set available ports for application to use
-# Example:
-# server:
-#  applicationConnectors:
-#   - type: http
-#      port: 8080
-#  adminConnectors:
-#     - type: http
-#        port: 8081
+# Set server params
 server:
-  applicationConnectors:
-    - type: http
-      port: 8080
-  adminConnectors:
-      - type: http
-        port: 8081
-
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: 8080
 
 ################################################
 # Application configurations
 ################################################
+application:
+  # Absolute path to GroupDocs license file
+  licensePath: /Users/Alex/Documents/GroupDocs.Viewer.lic
+  # Directory where all original files are stored
+  filesDirectory: /Users/Alex/Documents/GroupDocs/
+  # Directory all custom fonts are stored
+  fontsDirectory: /Users/Alex/Projects/Fonts/CustomFonts/
 
-# Run application as service (only public API)
-runAsService: false
-
-# Absolute path to GroupDocs license file
-licensePath: /Users/Alex/Documents/GroupDocs.Viewer.lic
-
-# Directory where all original files are stored
-filesDirectory: /Users/Alex/Documents/GroupDocs/
-
-# Directory all custom fonts are stored
-fontsDirectory: /Users/Alex/Projects/Fonts/CustomFonts/
-
-# Url/link to web resources (html, js, css, etc) archive
-# Required when runAsService: false
-resourcesUrl: https://github.com/bobkovalex/QuickView/archive/master.zip
+resources:
+  # Run application as service (only public API)
+  runAsService: false
+  # Url/link to web resources (html, js, css, etc) archive
+  # Required when runAsService: false
+  resourcesUrl: https://github.com/bobkovalex/QuickView/archive/master.zip

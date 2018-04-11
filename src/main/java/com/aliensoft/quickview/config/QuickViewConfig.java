@@ -13,55 +13,126 @@ import javax.validation.Valid;
 public class QuickViewConfig extends Configuration{
     @Valid
     @JsonProperty
-    private String filesDirectory;
+    private Application application;
 
     @Valid
     @JsonProperty
-    private Boolean runAsService;
+    private Resources resources;
 
-    @Valid
-    @JsonProperty
-    private String licensePath;
+    private Server server;
 
-    @Valid
-    @JsonProperty
-    private String fontsDirectory;
-
-    @Valid
-    @JsonProperty
-    private String resourcesUrl;
-
-    public String getFilesDirectory() {
-        return filesDirectory;
+    public QuickViewConfig(){
+        application = new Application();
+        resources = new Resources();
+        server = new Server();
     }
 
-    public void setFilesDirectory(String filesDirectory) {
-        this.filesDirectory = filesDirectory;
+    public Application getApplication() {
+        return application;
     }
 
-    public Boolean getRunAsService() {
-        return runAsService;
+    public Resources getResources() {
+        return resources;
     }
 
-    public void setRunAsService(Boolean runAsService) {
-        this.runAsService = runAsService;
+    public Server getServer() {
+        return server;
     }
 
-    public String getLicensePath() { return licensePath; }
+    /**
+     * Application related configurations
+     */
+    public class Application{
+        @Valid
+        @JsonProperty
+        private String filesDirectory;
 
-    public void setLicensePath(String licensePath) {
-        this.licensePath = licensePath;
+        @Valid
+        @JsonProperty
+        private String licensePath;
+
+        @Valid
+        @JsonProperty
+        private String fontsDirectory;
+
+        public String getFilesDirectory() {
+            return filesDirectory;
+        }
+
+        public void setFilesDirectory(String filesDirectory) {
+            this.filesDirectory = filesDirectory;
+        }
+
+        public String getLicensePath() {
+            return licensePath;
+        }
+
+        public void setLicensePath(String licensePath) {
+            this.licensePath = licensePath;
+        }
+
+        public String getFontsDirectory() {
+            return fontsDirectory;
+        }
+
+        public void setFontsDirectory(String fontsDirectory) {
+            this.fontsDirectory = fontsDirectory;
+        }
     }
 
-    public String getFontsDirectory() { return fontsDirectory; }
+    /**
+     * Resources related configuration
+     */
+    public class Resources{
+        @Valid
+        @JsonProperty
+        private Boolean runAsService;
 
-    public void setFontsDirectory(String fontsDirectory) { this.fontsDirectory = fontsDirectory; }
+        @Valid
+        @JsonProperty
+        private String resourcesUrl;
 
-    public String getResourcesUrl() {
-        return resourcesUrl;
+        public Boolean getRunAsService() {
+            return runAsService;
+        }
+
+        public void setRunAsService(Boolean runAsService) {
+            this.runAsService = runAsService;
+        }
+
+        public String getResourcesUrl() {
+            return resourcesUrl;
+        }
+
+        public void setResourcesUrl(String resourcesUrl) {
+            this.resourcesUrl = resourcesUrl;
+        }
     }
 
-    public void setResourcesUrl(String resourcesUrl) {
-        this.resourcesUrl = resourcesUrl;
+    /**
+     * Server related configurations
+     */
+    public class Server{
+        private int httpPort;
+        private String hostAddress;
+
+        public int getHttpPort() {
+            return httpPort;
+        }
+
+        public void setHttpPort(int httpPort) {
+            this.httpPort = httpPort;
+        }
+
+        public String getHostAddress() {
+            return hostAddress;
+        }
+
+        public void setHostAddress(String hostAddress) {
+            this.hostAddress = hostAddress;
+        }
     }
+
 }
+
+

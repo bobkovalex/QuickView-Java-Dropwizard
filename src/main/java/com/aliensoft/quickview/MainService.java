@@ -48,9 +48,9 @@ public class MainService extends Application<QuickViewConfig> {
         cors.addMappingForUrlPatterns(EnumSet.allOf(DispatcherType.class), true, "/*");
 
         // Get web resources for standalone mode
-        if(!config.getRunAsService()){
+        if(!config.getResources().getRunAsService()){
             WebAssetsManager webAssetsManager = new WebAssetsManager();
-            webAssetsManager.update(config.getResourcesUrl());
+            webAssetsManager.update(config.getResources().getResourcesUrl());
         }
 
         // Initiate QuickView
