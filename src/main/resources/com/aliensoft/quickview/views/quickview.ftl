@@ -14,12 +14,16 @@
         <div id="element"></div>
         <script type="text/javascript">
             $('#element').quickView({
-                applicationPath: 'http://${hostAddress}:${httpPort}/viewer',
-                preloadPageCount: 0,
-                zoom : true,
-                pageSelector: true,
-                search: true,
-                thumbnails: true
+                applicationPath: 'http://${config.server.hostAddress}:${config.server.httpPort?c}/viewer',
+                preloadPageCount: ${config.resources.preloadPageCount?c},
+				zoom : ${config.resources.zoom?c},
+				pageSelector: ${config.resources.pageSelector?c},
+				search: ${config.resources.search?c},
+				thumbnails: ${config.resources.thumbnails?c},
+				rotate: ${config.resources.rotate?c},
+				download: ${config.resources.download?c},
+                upload: ${config.resources.upload?c},
+                print: ${config.resources.print?c}
             });
         </script>
     </body>

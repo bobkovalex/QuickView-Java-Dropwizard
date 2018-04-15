@@ -77,8 +77,8 @@
         <div id="qvs-service-info-container">
             <h4>Current Configuration</h4>
             <ul>
-                <li><span>Files: </span>${filesDirectory}</li>
-                <li><span>Fonts: </span>${fontsDirectory}</li>
+                <li><span>Files: </span>${config.application.filesDirectory}</li>
+                <li><span>Fonts: </span>${config.application.fontsDirectory}</li>
             </ul>
         </div>
 

@@ -25,6 +25,26 @@ application:
 resources:
   # Run application as service (only public API)
   runAsService: false
+  ##############################################
+  # All params above are required when runAsService: false
+  ##############################################
   # Url/link to web resources (html, js, css, etc) archive
-  # Required when runAsService: false
   resourcesUrl: https://github.com/bobkovalex/QuickView/archive/master.zip
+  # Pages to be loaded on document open, 0 for all
+  preloadPageCount: 0
+  # Enable/disable document zoom
+  zoom: true
+  # Enable/disable page navigation
+  pageSelector: true
+  # Enable/disable text search
+  search: true
+  # Enable/disable thumbnails
+  thumbnails: true
+  # Enable/disable page rotation
+  rotate: true
+  # Enable/disable document download
+  download: true
+  # Enable/disable document upload
+  upload: true
+  # Enable/disable document print
+  print: true

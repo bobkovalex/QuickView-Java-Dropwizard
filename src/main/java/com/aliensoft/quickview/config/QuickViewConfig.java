@@ -92,6 +92,42 @@ public class QuickViewConfig extends Configuration{
         @JsonProperty
         private String resourcesUrl;
 
+        @Valid
+        @JsonProperty
+        private int preloadPageCount;
+
+        @Valid
+        @JsonProperty
+        private boolean zoom;
+
+        @Valid
+        @JsonProperty
+        private boolean pageSelector;
+
+        @Valid
+        @JsonProperty
+        private boolean search;
+
+        @Valid
+        @JsonProperty
+        private boolean thumbnails;
+
+        @Valid
+        @JsonProperty
+        private boolean rotate;
+
+        @Valid
+        @JsonProperty
+        private boolean download;
+
+        @Valid
+        @JsonProperty
+        private boolean upload;
+
+        @Valid
+        @JsonProperty
+        private boolean print;
+
         public Boolean getRunAsService() {
             return runAsService;
         }
@@ -106,6 +142,78 @@ public class QuickViewConfig extends Configuration{
 
         public void setResourcesUrl(String resourcesUrl) {
             this.resourcesUrl = resourcesUrl;
+        }
+
+        public int getPreloadPageCount() {
+            return preloadPageCount;
+        }
+
+        public void setPreloadPageCount(int preloadPageCount) {
+            this.preloadPageCount = preloadPageCount;
+        }
+
+        public boolean isZoom() {
+            return zoom;
+        }
+
+        public void setZoom(boolean zoom) {
+            this.zoom = zoom;
+        }
+
+        public boolean isPageSelector() {
+            return pageSelector;
+        }
+
+        public void setPageSelector(boolean pageSelector) {
+            this.pageSelector = pageSelector;
+        }
+
+        public boolean isSearch() {
+            return search;
+        }
+
+        public void setSearch(boolean search) {
+            this.search = search;
+        }
+
+        public boolean isThumbnails() {
+            return thumbnails;
+        }
+
+        public void setThumbnails(boolean thumbnails) {
+            this.thumbnails = thumbnails;
+        }
+
+        public boolean isRotate() {
+            return rotate;
+        }
+
+        public void setRotate(boolean rotate) {
+            this.rotate = rotate;
+        }
+
+        public boolean isDownload() {
+            return download;
+        }
+
+        public void setDownload(boolean download) {
+            this.download = download;
+        }
+
+        public boolean isUpload() {
+            return upload;
+        }
+
+        public void setUpload(boolean upload) {
+            this.upload = upload;
+        }
+
+        public boolean isPrint() {
+            return print;
+        }
+
+        public void setPrint(boolean print) {
+            this.print = print;
         }
     }
 
