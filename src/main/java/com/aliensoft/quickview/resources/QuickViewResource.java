@@ -4,6 +4,7 @@ import com.aliensoft.quickview.config.QuickViewConfig;
 import com.aliensoft.quickview.domain.web.MediaType;
 import com.aliensoft.quickview.domain.wrapper.ErrorMsgWrapper;
 import com.aliensoft.quickview.domain.wrapper.FileDescriptionWrapper;
+import com.aliensoft.quickview.domain.wrapper.LoadedPageWrapper;
 import com.aliensoft.quickview.domain.wrapper.RotatedPageWrapper;
 import com.aliensoft.quickview.domain.wrapper.UploadedDocumentWrapper;
 import com.aliensoft.quickview.views.QuickView;
@@ -187,19 +188,25 @@ public class QuickViewResource extends QuickViewResourcesBase{
     public Object loadDocumentPage(@Context HttpServletRequest request, @Context HttpServletResponse response){
         try {
             // set response content type
-            setResponseContentType(response, MediaType.TEXT_HTML);
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
             // get request body
             String requestBody = getRequestBody(request);
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
             int pageNumber = getJsonInteger(requestBody, "page");
+            LoadedPageWrapper loadedPage = new LoadedPageWrapper();
             // set options
             HtmlOptions htmlOptions = new HtmlOptions();
             htmlOptions.setPageNumber(pageNumber);
             htmlOptions.setCountPagesToRender(1);
             htmlOptions.setResourcesEmbedded(true);
+            // get page HTML
+            loadedPage.setPageHtml(viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent());
+            // get page rotation angle
+            String angle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
+            loadedPage.setAngle(angle);
             // return html
-            return viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent();
+            return objectToJson(loadedPage);
         }catch (Exception ex){
             // set response content type
             setResponseContentType(response, MediaType.APPLICATION_JSON);
