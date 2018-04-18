@@ -47,6 +47,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 
@@ -120,7 +121,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // parse files/folders list
             for(FileDescription fd : fileListContainer.getFiles()){
                 FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
-                fileDescription.setGuid(fd.getGuid());
+                fileDescription.setGuid(fd.getName());
                 // check if current file/folder is temp directory or is hidden
                 if(tempDirectoryName.equals(fd.getName()) || new File(fileDescription.getGuid()).isHidden()) {
                     // ignore current file and skip to next one
@@ -163,6 +164,10 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String requestBody = getRequestBody(request);
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
+            // check if documentGuid contains path or only file name
+            if(!Paths.get(documentGuid).isAbsolute()){
+                documentGuid = quickViewConfig.getApplication().getFilesDirectory() + "/" + documentGuid;
+            }
             // get document info options
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
             // get document info container
