@@ -121,7 +121,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // parse files/folders list
             for(FileDescription fd : fileListContainer.getFiles()){
                 FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
-                fileDescription.setGuid(fd.getGuid());
+                fileDescription.setGuid(fd.getName());
                 // check if current file/folder is temp directory or is hidden
                 if(tempDirectoryName.equals(fd.getName()) || new File(fileDescription.getGuid()).isHidden()) {
                     // ignore current file and skip to next one
