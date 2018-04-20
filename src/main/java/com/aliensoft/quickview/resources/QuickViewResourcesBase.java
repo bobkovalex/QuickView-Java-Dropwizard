@@ -102,4 +102,15 @@ public abstract class QuickViewResourcesBase {
         return value;
     }
 
+    protected boolean getJsonBoolean(String json, String key){
+        boolean value = true;
+        try {
+            JSONObject jsonObject = new JSONObject(json);
+            value = jsonObject.getBoolean(key);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return value;
+    }
+
 }

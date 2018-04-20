@@ -6,6 +6,7 @@ package com.aliensoft.quickview.domain.wrapper;
 public class LoadedPageWrapper {
     private String pageHtml;
     private String angle;
+    private String pageImage;
 
     public String getPageHtml() {
         return pageHtml;
@@ -21,5 +22,13 @@ public class LoadedPageWrapper {
 
     public void setAngle(String angle) {
         this.angle = angle;
+    }
+
+    public String getPageImage() {
+        return pageImage;
+    }
+
+    public void setPageImage(String pageImage) {
+        this.pageImage = pageImage;
     }
 }

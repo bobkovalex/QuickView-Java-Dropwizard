@@ -128,6 +128,18 @@ public class QuickViewConfig extends Configuration{
         @JsonProperty
         private boolean print;
 
+        @Valid
+        @JsonProperty
+        private String defaultDocument;
+
+        @Valid
+        @JsonProperty
+        private boolean browse;
+
+        @Valid
+        @JsonProperty
+        private boolean htmlMode;
+
         public Boolean getRunAsService() {
             return runAsService;
         }
@@ -214,6 +226,30 @@ public class QuickViewConfig extends Configuration{
 
         public void setPrint(boolean print) {
             this.print = print;
+        }
+
+        public String getDefaultDocument() {
+            return defaultDocument;
+        }
+
+        public void setDefaultDocument(String defaultDocument) {
+            this.defaultDocument = defaultDocument;
+        }
+
+        public boolean isBrowse() {
+            return browse;
+        }
+
+        public void setBrowse(boolean browse) {
+            this.browse = browse;
+        }
+
+        public boolean isHtmlMode() {
+            return htmlMode;
+        }
+
+        public void setHtmlMode(boolean htmlMode) {
+            this.htmlMode = htmlMode;
         }
     }
 

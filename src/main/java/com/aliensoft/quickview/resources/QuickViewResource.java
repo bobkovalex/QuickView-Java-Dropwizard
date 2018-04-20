@@ -11,6 +11,7 @@ import com.aliensoft.quickview.views.QuickView;
 import com.google.gson.Gson;
 import com.groupdocs.viewer.config.ViewerConfig;
 import com.groupdocs.viewer.converter.options.HtmlOptions;
+import com.groupdocs.viewer.converter.options.ImageOptions;
 import com.groupdocs.viewer.domain.FileDescription;
 import com.groupdocs.viewer.domain.containers.DocumentInfoContainer;
 import com.groupdocs.viewer.domain.containers.FileListContainer;
@@ -18,11 +19,13 @@ import com.groupdocs.viewer.domain.options.DocumentInfoOptions;
 import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.domain.options.RotatePageOptions;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
+import com.groupdocs.viewer.handler.ViewerImageHandler;
 import com.groupdocs.viewer.licensing.License;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.SimpleServerFactory;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,6 +53,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  * QuickView
@@ -61,6 +65,7 @@ import java.util.ArrayList;
 public class QuickViewResource extends QuickViewResourcesBase{
     private final QuickViewConfig quickViewConfig;
     private final ViewerHtmlHandler viewerHtmlHandler;
+    private final ViewerImageHandler viewerImageHandler;
 
     /**
      * Constructor
@@ -84,6 +89,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
         license.setLicense(quickViewConfig.getApplication().getLicensePath());
         // initialize viewer instance for the HTML mode
         viewerHtmlHandler = new ViewerHtmlHandler(config);
+        // initialize viewer instance for the Image mode
+        viewerImageHandler = new ViewerImageHandler(config);
     }
 
     /**
@@ -164,14 +171,20 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String requestBody = getRequestBody(request);
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
+            boolean htmlMode = getJsonBoolean(requestBody, "htmlMode");
             // check if documentGuid contains path or only file name
             if(!Paths.get(documentGuid).isAbsolute()){
                 documentGuid = quickViewConfig.getApplication().getFilesDirectory() + "/" + documentGuid;
             }
+            DocumentInfoContainer documentInfoContainer = new DocumentInfoContainer();
             // get document info options
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
             // get document info container
-            DocumentInfoContainer documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
+            if(htmlMode) {
+                documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
+            } else {
+                documentInfoContainer = viewerImageHandler.getDocumentInfo(documentGuid, documentInfoOptions);
+            }
             // return document description
             return objectToJson(documentInfoContainer.getPages());
         }catch (Exception ex){
@@ -199,18 +212,33 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
             int pageNumber = getJsonInteger(requestBody, "page");
+            boolean htmlMode = getJsonBoolean(requestBody, "htmlMode");
             LoadedPageWrapper loadedPage = new LoadedPageWrapper();
+            String angle = "0";
             // set options
-            HtmlOptions htmlOptions = new HtmlOptions();
-            htmlOptions.setPageNumber(pageNumber);
-            htmlOptions.setCountPagesToRender(1);
-            htmlOptions.setResourcesEmbedded(true);
-            // get page HTML
-            loadedPage.setPageHtml(viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent());
-            // get page rotation angle
-            String angle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
+            if(htmlMode) {
+                HtmlOptions htmlOptions = new HtmlOptions();
+                htmlOptions.setPageNumber(pageNumber);
+                htmlOptions.setCountPagesToRender(1);
+                htmlOptions.setResourcesEmbedded(true);
+                // get page HTML
+                loadedPage.setPageHtml(viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent());
+                // get page rotation angle
+                angle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
+            } else {
+                ImageOptions imageOptions = new ImageOptions();
+                imageOptions.setPageNumber(pageNumber);
+                imageOptions.setCountPagesToRender(1);
+                // get page image
+                byte[] bytes = IOUtils.toByteArray(viewerImageHandler.getPages(documentGuid, imageOptions).get(0).getStream());
+                // encode ByteArray into String
+                String incodedImage = new String(Base64.getEncoder().encode(bytes));
+                loadedPage.setPageImage(incodedImage);
+                // get page rotation angle
+                angle = String.valueOf(viewerImageHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
+            }
             loadedPage.setAngle(angle);
-            // return html
+            // return loaded page object
             return objectToJson(loadedPage);
         }catch (Exception ex){
             // set response content type
@@ -240,6 +268,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentGuid = getJsonString(requestBody, "guid");
             int angle =  Integer.parseInt(getJsonString(requestBody, "angle"));
             JSONArray pages = new JSONObject(requestBody).getJSONArray("pages");
+            boolean htmlMode = getJsonBoolean(requestBody, "htmlMode");
             // a list of the rotated pages info
             ArrayList<RotatedPageWrapper> rotatedPages = new ArrayList<RotatedPageWrapper>();
             // rotate pages
@@ -249,11 +278,17 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 int pageNumber = Integer.parseInt(pages.get(i).toString());
                 RotatePageOptions rotateOptions = new RotatePageOptions(pageNumber, angle);
                 // perform page rotation
-                viewerHtmlHandler.rotatePage(documentGuid, rotateOptions);
+                String resultAngle = "0";
+                if(htmlMode) {
+                    viewerHtmlHandler.rotatePage(documentGuid, rotateOptions);
+                    resultAngle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
+                } else {
+                    viewerImageHandler.rotatePage(documentGuid, rotateOptions);
+                    resultAngle = String.valueOf(viewerImageHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
+                }
                 // add rotated page number
                 rotatedPage.setPageNumber(pageNumber);
                 // add rotated page angle
-                String resultAngle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
                 rotatedPage.setAngle(resultAngle);
                 // add rotated page object into resulting list
                 rotatedPages.add(rotatedPage);

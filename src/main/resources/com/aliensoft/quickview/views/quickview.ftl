@@ -23,7 +23,10 @@
 				rotate: ${config.resources.rotate?c},
 				download: ${config.resources.download?c},
                 upload: ${config.resources.upload?c},
-                print: ${config.resources.print?c}
+                print: ${config.resources.print?c},
+                defaultDocument: '${config.resources.defaultDocument}',
+                browse: ${config.resources.browse?c},
+                htmlMode: ${config.resources.htmlMode?c}
             });
         </script>
     </body>

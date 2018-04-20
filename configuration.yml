@@ -48,3 +48,9 @@ resources:
   upload: true
   # Enable/disable document print
   print: true
+  # Set default document to view
+  defaultDocument: ''
+  # Enable/disable documents browse
+  browse: true
+  # Enable/disable HTMl rendering mode, false for image mode
+  htmlMode: true
