@@ -181,7 +181,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // get document info options
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
             // set password for protected document
-            if(password != "" || password != null) {
+            if(!password.isEmpty()) {
                 documentInfoOptions.setPassword(password);
             }
             // get document info container
@@ -228,7 +228,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 htmlOptions.setCountPagesToRender(1);
                 htmlOptions.setResourcesEmbedded(true);
                 // set password for protected document
-                if(password != "" || password != null) {
+                if(!password.isEmpty()) {
                     htmlOptions.setPassword(password);
                 }
                 // get page HTML
@@ -240,7 +240,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 imageOptions.setPageNumber(pageNumber);
                 imageOptions.setCountPagesToRender(1);
                 // set password for protected document
-                if(password != "" || password != null) {
+                if(!password.isEmpty()) {
                     imageOptions.setPassword(password);
                 }
                 // get page image
@@ -295,7 +295,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 // perform page rotation
                 String resultAngle = "0";
                 // set password for protected document
-                if(password != "" || password != null) {
+                if(!password.isEmpty()) {
                     rotateOptions.setPassword(password);
                 }
                 if(htmlMode) {
