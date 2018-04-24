@@ -3,6 +3,7 @@ package com.aliensoft.quickview.resources;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -111,6 +113,27 @@ public abstract class QuickViewResourcesBase {
             e.printStackTrace();
         }
         return value;
+    }
+
+    protected File getFreeFileName(String directory, String fileName){
+        File file = null;
+        try {
+            File folder = new File(directory);
+            File[] listOfFiles = folder.listFiles();
+            for (int i = 0; i < listOfFiles.length; i++) {
+                int number = i + 1;
+                String newFileName = FilenameUtils.removeExtension(fileName) + "-Copy(" + number + ")." + FilenameUtils.getExtension(fileName);
+                file = new File(directory + "/" + newFileName);
+                if(file.exists()) {
+                    continue;
+                } else {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return file;
     }
 
 }

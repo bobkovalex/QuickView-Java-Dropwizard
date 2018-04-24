@@ -379,6 +379,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
             Part filePart = request.getPart("file");
             // get document URL
             String documentUrl = request.getParameter("url");
+            // get rewrite mode
+            boolean rewrite = Boolean.parseBoolean(request.getParameter("rewrite"));
             InputStream uploadedInputStream = null;
             String fileName = "";
             if(documentUrl.isEmpty() || documentUrl == null) {
@@ -395,7 +397,19 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentStoragePath = quickViewConfig.getApplication().getFilesDirectory();
             // save the file
             File file = new File(documentStoragePath + "/" + fileName);
-            Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            // check rewrite mode
+            if(rewrite) {
+                // save file with rewrite if exists
+                Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                if (file.exists())
+                {
+                    // get file with new name
+                    file = getFreeFileName(documentStoragePath, fileName);
+                }
+                // save file with out rewriting
+                Files.copy(uploadedInputStream, file.toPath());
+            }
             UploadedDocumentWrapper uploadedDocument = new UploadedDocumentWrapper();
             uploadedDocument.setGuid(documentStoragePath + "/" + fileName);
             return objectToJson(uploadedDocument);

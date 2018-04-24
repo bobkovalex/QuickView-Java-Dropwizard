@@ -7,7 +7,7 @@
         <link type="text/css" rel="stylesheet" href="assets/css/quickview.css"/>
         <link type="text/css" rel="stylesheet" href="assets/css/quickview.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="assets/css/quickview-dark.css"/>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
         <script type="text/javascript" src="assets/js/quickview.js"></script>
     </head>
     <body>
@@ -26,7 +26,8 @@
                 print: ${config.resources.print?c},
                 defaultDocument: '${config.resources.defaultDocument}',
                 browse: ${config.resources.browse?c},
-                htmlMode: ${config.resources.htmlMode?c}
+                htmlMode: ${config.resources.htmlMode?c},
+                rewrite: ${config.resources.rewrite?c}
             });
         </script>
     </body>
