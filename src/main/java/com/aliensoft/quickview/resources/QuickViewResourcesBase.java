@@ -3,6 +3,7 @@ package com.aliensoft.quickview.resources;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.google.gson.Gson;
 import org.apache.commons.io.FilenameUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,10 +36,9 @@ public abstract class QuickViewResourcesBase {
 
     protected String objectToJson(Object object){
         try {
-            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
-            String auxJson = ow.writeValueAsString(object);
+            String auxJson = new Gson().toJson(object);
             return auxJson;
-        } catch (JsonProcessingException ex) {
+        } catch (Exception ex) {
             Logger.getLogger(QuickViewResourcesBase.class.getName()).log(Level.SEVERE, null, ex);
             return null;
         }
