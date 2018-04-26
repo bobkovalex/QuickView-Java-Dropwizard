@@ -140,6 +140,10 @@ public class QuickViewConfig extends Configuration{
         @JsonProperty
         private boolean htmlMode;
 
+        @Valid
+        @JsonProperty
+        private boolean rewrite;
+
         public Boolean getRunAsService() {
             return runAsService;
         }
@@ -250,6 +254,14 @@ public class QuickViewConfig extends Configuration{
 
         public void setHtmlMode(boolean htmlMode) {
             this.htmlMode = htmlMode;
+        }
+
+        public boolean isRewrite() {
+            return rewrite;
+        }
+
+        public void setRewrite(boolean rewrite) {
+            this.rewrite = rewrite;
         }
     }
 

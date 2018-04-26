@@ -18,9 +18,12 @@ import com.groupdocs.viewer.domain.containers.FileListContainer;
 import com.groupdocs.viewer.domain.options.DocumentInfoOptions;
 import com.groupdocs.viewer.domain.options.FileListOptions;
 import com.groupdocs.viewer.domain.options.RotatePageOptions;
+import com.groupdocs.viewer.exception.GroupDocsViewerException;
+import com.groupdocs.viewer.exception.InvalidPasswordException;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
 import com.groupdocs.viewer.handler.ViewerImageHandler;
 import com.groupdocs.viewer.licensing.License;
+import com.groupdocs.viewer.localization.ILocalizationHandler;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.SimpleServerFactory;
@@ -150,7 +153,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
         }catch (Exception ex){
             // set exception message
             ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-            errorMsgWrapper.setError(ex.getMessage());
+            errorMsgWrapper.setMessage(ex.getMessage());
+            errorMsgWrapper.setException(ex);
             return objectToJson(errorMsgWrapper);
         }
     }
@@ -166,12 +170,14 @@ public class QuickViewResource extends QuickViewResourcesBase{
     public Object loadDocumentDescription(@Context HttpServletRequest request, @Context HttpServletResponse response){
         // set response content type
         setResponseContentType(response, MediaType.APPLICATION_JSON);
+        String password = "";
         try {
             // get request body
             String requestBody = getRequestBody(request);
             // get/set parameters
             String documentGuid = getJsonString(requestBody, "guid");
             boolean htmlMode = getJsonBoolean(requestBody, "htmlMode");
+            password = getJsonString(requestBody, "password");
             // check if documentGuid contains path or only file name
             if(!Paths.get(documentGuid).isAbsolute()){
                 documentGuid = quickViewConfig.getApplication().getFilesDirectory() + "/" + documentGuid;
@@ -179,18 +185,35 @@ public class QuickViewResource extends QuickViewResourcesBase{
             DocumentInfoContainer documentInfoContainer = new DocumentInfoContainer();
             // get document info options
             DocumentInfoOptions documentInfoOptions = new DocumentInfoOptions(documentGuid);
+            // set password for protected document
+            if(!password.isEmpty() && password != null) {
+                documentInfoOptions.setPassword(password);
+            }
             // get document info container
-            if(htmlMode) {
+           if (htmlMode) {
                 documentInfoContainer = viewerHtmlHandler.getDocumentInfo(documentGuid, documentInfoOptions);
             } else {
                 documentInfoContainer = viewerImageHandler.getDocumentInfo(documentGuid, documentInfoOptions);
             }
             // return document description
             return objectToJson(documentInfoContainer.getPages());
+        }catch (GroupDocsViewerException ex){
+            // Set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            if(GroupDocsViewerException.class.isAssignableFrom(InvalidPasswordException.class) && password.isEmpty()) {
+                errorMsgWrapper.setMessage("Password Required");
+            }else if(GroupDocsViewerException.class.isAssignableFrom(InvalidPasswordException.class) && !password.isEmpty()){
+                errorMsgWrapper.setMessage("Incorrect password");
+            }else{
+                errorMsgWrapper.setMessage(ex.getMessage());
+            }
+            errorMsgWrapper.setException(ex);
+            return objectToJson(errorMsgWrapper);
         }catch (Exception ex){
             // set exception message
             ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-            errorMsgWrapper.setError(ex.getMessage());
+            errorMsgWrapper.setMessage(ex.getMessage());
+            errorMsgWrapper.setException(ex);
             return objectToJson(errorMsgWrapper);
         }
     }
@@ -213,6 +236,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentGuid = getJsonString(requestBody, "guid");
             int pageNumber = getJsonInteger(requestBody, "page");
             boolean htmlMode = getJsonBoolean(requestBody, "htmlMode");
+            String password = getJsonString(requestBody, "password");
             LoadedPageWrapper loadedPage = new LoadedPageWrapper();
             String angle = "0";
             // set options
@@ -221,6 +245,10 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 htmlOptions.setPageNumber(pageNumber);
                 htmlOptions.setCountPagesToRender(1);
                 htmlOptions.setResourcesEmbedded(true);
+                // set password for protected document
+                if(!password.isEmpty() && password != null) {
+                    htmlOptions.setPassword(password);
+                }
                 // get page HTML
                 loadedPage.setPageHtml(viewerHtmlHandler.getPages(documentGuid, htmlOptions).get(0).getHtmlContent());
                 // get page rotation angle
@@ -229,6 +257,10 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 ImageOptions imageOptions = new ImageOptions();
                 imageOptions.setPageNumber(pageNumber);
                 imageOptions.setCountPagesToRender(1);
+                // set password for protected document
+                if(!password.isEmpty()) {
+                    imageOptions.setPassword(password);
+                }
                 // get page image
                 byte[] bytes = IOUtils.toByteArray(viewerImageHandler.getPages(documentGuid, imageOptions).get(0).getStream());
                 // encode ByteArray into String
@@ -245,7 +277,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
             setResponseContentType(response, MediaType.APPLICATION_JSON);
             // set exception message
             ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-            errorMsgWrapper.setError(ex.getMessage());
+            errorMsgWrapper.setMessage(ex.getMessage());
+            errorMsgWrapper.setException(ex);
             return objectToJson(errorMsgWrapper);
         }
     }
@@ -269,6 +302,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             int angle =  Integer.parseInt(getJsonString(requestBody, "angle"));
             JSONArray pages = new JSONObject(requestBody).getJSONArray("pages");
             boolean htmlMode = getJsonBoolean(requestBody, "htmlMode");
+            String password = getJsonString(requestBody, "password");
             // a list of the rotated pages info
             ArrayList<RotatedPageWrapper> rotatedPages = new ArrayList<RotatedPageWrapper>();
             // rotate pages
@@ -279,6 +313,10 @@ public class QuickViewResource extends QuickViewResourcesBase{
                 RotatePageOptions rotateOptions = new RotatePageOptions(pageNumber, angle);
                 // perform page rotation
                 String resultAngle = "0";
+                // set password for protected document
+                if(!password.isEmpty() && password != null) {
+                    rotateOptions.setPassword(password);
+                }
                 if(htmlMode) {
                     viewerHtmlHandler.rotatePage(documentGuid, rotateOptions);
                     resultAngle = String.valueOf(viewerHtmlHandler.getDocumentInfo(documentGuid).getPages().get(pageNumber - 1).getAngle());
@@ -299,7 +337,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
             setResponseContentType(response, MediaType.APPLICATION_JSON);
             // set exception message
             ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-            errorMsgWrapper.setError(ex.getMessage());
+            errorMsgWrapper.setMessage(ex.getMessage());
+            errorMsgWrapper.setException(ex);
             return objectToJson(errorMsgWrapper);
         }
     }
@@ -311,7 +350,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
      */
     @GET
     @Path(value = "/downloadDocument")
-    public void downloadDocument(@Context HttpServletRequest request, @Context HttpServletResponse response) throws ServletException, IOException {
+    public Object downloadDocument(@Context HttpServletRequest request, @Context HttpServletResponse response) throws ServletException, IOException {
         int bytesRead = 0;
         int count = 0;
         byte[] buff = new byte[16 * 1024];
@@ -329,9 +368,18 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // download the document
             inputStream = new BufferedInputStream(new FileInputStream(documentGuid));
             outStream = new BufferedOutputStream(out);
-            while((count = inputStream.read(buff)) != -1) {
+            while ((count = inputStream.read(buff)) != -1) {
                 outStream.write(buff, 0, count);
             }
+            return outStream;
+        } catch (Exception ex){
+            // set response content type
+            setResponseContentType(response, MediaType.APPLICATION_JSON);
+            // set exception message
+            ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
+            errorMsgWrapper.setMessage(ex.getMessage());
+            errorMsgWrapper.setException(ex);
+            return objectToJson(errorMsgWrapper);
         } finally {
             // close streams
             if (inputStream != null)
@@ -360,6 +408,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
             Part filePart = request.getPart("file");
             // get document URL
             String documentUrl = request.getParameter("url");
+            // get rewrite mode
+            boolean rewrite = Boolean.parseBoolean(request.getParameter("rewrite"));
             InputStream uploadedInputStream = null;
             String fileName = "";
             if(documentUrl.isEmpty() || documentUrl == null) {
@@ -376,7 +426,19 @@ public class QuickViewResource extends QuickViewResourcesBase{
             String documentStoragePath = quickViewConfig.getApplication().getFilesDirectory();
             // save the file
             File file = new File(documentStoragePath + "/" + fileName);
-            Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            // check rewrite mode
+            if(rewrite) {
+                // save file with rewrite if exists
+                Files.copy(uploadedInputStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                if (file.exists())
+                {
+                    // get file with new name
+                    file = getFreeFileName(documentStoragePath, fileName);
+                }
+                // save file with out rewriting
+                Files.copy(uploadedInputStream, file.toPath());
+            }
             UploadedDocumentWrapper uploadedDocument = new UploadedDocumentWrapper();
             uploadedDocument.setGuid(documentStoragePath + "/" + fileName);
             return objectToJson(uploadedDocument);
@@ -385,7 +447,8 @@ public class QuickViewResource extends QuickViewResourcesBase{
             setResponseContentType(response, MediaType.APPLICATION_JSON);
             // set exception message
             ErrorMsgWrapper errorMsgWrapper = new ErrorMsgWrapper();
-            errorMsgWrapper.setError(ex.getMessage());
+            errorMsgWrapper.setMessage(ex.getMessage());
+            errorMsgWrapper.setException(ex);
             return objectToJson(errorMsgWrapper);
         }
     }
