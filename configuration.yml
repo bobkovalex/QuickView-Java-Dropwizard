@@ -30,8 +30,16 @@ resources:
   ##############################################
   # Url/link to web resources (html, js, css, etc) archive
   resourcesUrl: https://github.com/bobkovalex/QuickView/archive/master.zip
+  # Enable/disable resources downloading, false for download
+  offlineMode: true
+  # Set default document to view
+  defaultDocument: ''
+  # Enable/disable HTMl rendering mode, false for image mode
+  htmlMode: true
   # Pages to be loaded on document open, 0 for all
-  preloadPageCount: 0
+  preloadPageCount: 2
+  # Enable/disable rewrite for uploaded file if file with the same name already exists
+  rewrite: true
   # Enable/disable document zoom
   zoom: true
   # Enable/disable page navigation
@@ -48,11 +56,5 @@ resources:
   upload: true
   # Enable/disable document print
   print: true
-  # Set default document to view
-  defaultDocument: ''
   # Enable/disable documents browse
   browse: true
-  # Enable/disable HTMl rendering mode, false for image mode
-  htmlMode: true
-  # Enable/disable rewrite for uploaded file if file with the same name already exists
-  rewrite: true

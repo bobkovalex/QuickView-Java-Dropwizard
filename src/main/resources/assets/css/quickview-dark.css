@@ -1,0 +1,44 @@
+/*
+Header, modal header, modal footer buttons
+*/
+#qv-header, #qv-nav-search-container, .qv-modal-header, .qv-modal-footer > .btn{
+    background-color: #3e4e5a;
+}
+/*
+Header logo
+*/
+#qv-header-logo{
+	background-image: url('../images/logo.png');
+	background-color: #25c2d4;
+}
+/*
+Navigation bar buttons, search buttons, modal close button
+*/
+#qv-navbar > li, .qv-nav-search-btn, .qv-modal-close{
+	color: #959da5;
+}
+/*
+Hover for:
+Navigation bar buttons, search buttons, modal close button
+*/
+#qv-navbar > li:hover, .qv-nav-search-btn:hover, .qv-modal-close:hover, #qv-navbar .open{
+	color: #ffffff;
+}
+/*
+Text color 1
+*/
+.qv-nav-dropdown-menu li, .qv-modal-table{
+	color: #777777;
+}
+/*
+Text color 2
+*/
+.qv-modal-table td:nth-child(3), .qv-modal-table td:last-child{
+	color: #b2b8bd;
+}
+/*
+Text color 3
+*/
+.qv-modal-title, .qv-modal-footer > .btn{
+	color: #ffffff;
+}

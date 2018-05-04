@@ -23,7 +23,6 @@ import com.groupdocs.viewer.exception.InvalidPasswordException;
 import com.groupdocs.viewer.handler.ViewerHtmlHandler;
 import com.groupdocs.viewer.handler.ViewerImageHandler;
 import com.groupdocs.viewer.licensing.License;
-import com.groupdocs.viewer.localization.ILocalizationHandler;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.SimpleServerFactory;
@@ -131,7 +130,7 @@ public class QuickViewResource extends QuickViewResourcesBase{
             // parse files/folders list
             for(FileDescription fd : fileListContainer.getFiles()){
                 FileDescriptionWrapper fileDescription = new FileDescriptionWrapper();
-                fileDescription.setGuid(fd.getName());
+                fileDescription.setGuid(fd.getGuid());
                 // check if current file/folder is temp directory or is hidden
                 if(tempDirectoryName.equals(fd.getName()) || new File(fileDescription.getGuid()).isHidden()) {
                     // ignore current file and skip to next one
