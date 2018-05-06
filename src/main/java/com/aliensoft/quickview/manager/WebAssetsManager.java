@@ -16,46 +16,51 @@ public class WebAssetsManager {
      * @throws IOException
      */
     public void update(String link) throws IOException {
-        // Temp directory
-        File tempDirectory = new File("temp");
+        try {
+            // Temp directory
+            File tempDirectory = new File("temp");
 
-        // Project resources directory
-        //String projectAssetsPath = "src/main/resources/assets";
-        String targetAssetsPath = "target/classes/assets";
+            // Project resources directory
+            //String projectAssetsPath = "src/main/resources/assets";
+            String targetAssetsPath = "target/classes/assets";
 
-        // Download zip file
-        System.out.println("DOWNLOADING FILES...");
-        File zipFile = download(link);
-        System.out.println("OK!");
-        System.out.println();
+            // Download zip file
+            System.out.println("DOWNLOADING FILES...");
+            File zipFile = download(link);
+            System.out.println("OK!");
+            System.out.println();
 
-        // Extract files from zip archive
-        System.out.println("EXTRACTING FILES...");
-        String inResourcesPath = unzip(zipFile, tempDirectory);
-        System.out.println("OK!");
-        System.out.println();
+            // Extract files from zip archive
+            System.out.println("EXTRACTING FILES...");
+            String inResourcesPath = unzip(zipFile, tempDirectory);
+            System.out.println("OK!");
+            System.out.println();
 
-        // Clean project's resources directory
-        System.out.println("CLEANING RESOURCE DIRECTORY...");
-        //clean(projectAssetsPath);
-        clean(targetAssetsPath);
-        System.out.println("OK!");
-        System.out.println();
+            // Clean project's resources directory
+            System.out.println("CLEANING RESOURCE DIRECTORY...");
+            //clean(projectAssetsPath);
+            clean(targetAssetsPath);
+            System.out.println("OK!");
+            System.out.println();
 
-        // Copy downloaded resources to project directory
-        System.out.println("COPYING FILES...");
-        // Copy files to project directory (as backup)
-        //copy(inResourcesPath, projectAssetsPath);
-        // Copy files to target directory to get latest changes without an application restart
-        copy(inResourcesPath, targetAssetsPath);
-        System.out.println("OK!");
-        System.out.println();
+            // Copy downloaded resources to project directory
+            System.out.println("COPYING FILES...");
+            // Copy files to project directory (as backup)
+            //copy(inResourcesPath, projectAssetsPath);
+            // Copy files to target directory to get latest changes without an application restart
+            copy(inResourcesPath, targetAssetsPath);
+            System.out.println("OK!");
+            System.out.println();
 
-        // Remove temp directory
-        System.out.println("REMOVING TEMP DIRECTORY...");
-        clean(tempDirectory);
-        System.out.println("OK!");
-        System.out.println();
+            // Remove temp directory
+            System.out.println("REMOVING TEMP DIRECTORY...");
+            clean(tempDirectory);
+            System.out.println("OK!");
+            System.out.println();
+        } catch (Exception ex){
+            System.out.println("THERE IS NO INTERNET CONNECTION");
+            System.out.println("BUILT IN RESOURCES WILL BE USED");
+        }
     }
 
     /**

@@ -7,9 +7,10 @@
         <link type="text/css" rel="stylesheet" href="assets/css/quickview.css"/>
         <link type="text/css" rel="stylesheet" href="assets/css/quickview.mobile.css"/>
         <link type="text/css" rel="stylesheet" href="assets/css/quickview-dark.css"/>
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.2.2/css/swiper.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.2.2/js/swiper.min.js"></script>
+		<link type="text/css" rel="stylesheet" href="assets/css/quickview-circle-progress.css"/>
+		<link rel="stylesheet" href="assets/css/swiper.min.css">
+        <script src="assets/js/jquery.min.js"></script>
+		<script src="assets/js/swiper.min.js"></script>
         <script type="text/javascript" src="assets/js/quickview.js"></script>
     </head>
     <body>
@@ -17,6 +18,9 @@
         <script type="text/javascript">
             $('#element').quickView({
                 applicationPath: 'http://${config.server.hostAddress}:${config.server.httpPort?c}/viewer',
+				offlineMode: ${config.resources.offlineMode?c},
+				defaultDocument: '${config.resources.defaultDocument}',
+				htmlMode: ${config.resources.htmlMode?c},
                 preloadPageCount: ${config.resources.preloadPageCount?c},
 				zoom : ${config.resources.zoom?c},
 				pageSelector: ${config.resources.pageSelector?c},
@@ -25,10 +29,8 @@
 				rotate: ${config.resources.rotate?c},
 				download: ${config.resources.download?c},
                 upload: ${config.resources.upload?c},
-                print: ${config.resources.print?c},
-                defaultDocument: '${config.resources.defaultDocument}',
-                browse: ${config.resources.browse?c},
-                htmlMode: ${config.resources.htmlMode?c},
+                print: ${config.resources.print?c},                
+                browse: ${config.resources.browse?c},               
                 rewrite: ${config.resources.rewrite?c}
             });
         </script>

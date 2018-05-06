@@ -144,6 +144,10 @@ public class QuickViewConfig extends Configuration{
         @JsonProperty
         private boolean rewrite;
 
+        @Valid
+        @JsonProperty
+        private boolean offlineMode;
+
         public Boolean getRunAsService() {
             return runAsService;
         }
@@ -263,6 +267,10 @@ public class QuickViewConfig extends Configuration{
         public void setRewrite(boolean rewrite) {
             this.rewrite = rewrite;
         }
+
+        public boolean isOfflineMode() { return offlineMode; }
+
+        public void setOfflineMode(boolean offlineMode) { this.offlineMode = offlineMode; }
     }
 
     /**
