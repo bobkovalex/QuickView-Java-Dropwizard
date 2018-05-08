@@ -168,12 +168,12 @@
 	#qv-upload-files-table div > i {
         font-size: 40px !important;
         top: 72px !important;
-  }
+	}
 	#qv-upload-files-table .qv-filetree-name {
         top: 55px;
         left: 75px;
         width: calc(100% - 285px);
- }
+	}
 	#qv-upload-files-table .qv-filetree-name > span{
 		font-size: 30px;
 		padding-left: 0;
@@ -197,13 +197,13 @@
 		color: #ffffff;
 	}
 	.qv-cancel-button {
-	width: 100%;
-	height: 100%;
-	font-size: 40px;
-	font-weight: 200;
-	color: #ffffff;
-	text-align: left;
-	padding-left: 110px;
+		width: 100%;
+		height: 100%;
+		font-size: 40px;
+		font-weight: 200;
+		color: #ffffff;
+		text-align: left;
+		padding-left: 110px;
 	}
 	.qv-url-wrap, .qv-password-wrap{
 	    height: 91px;
@@ -261,6 +261,9 @@
 	}
 	#qv-url-cancel i {
 		font-size: 53px;		
+	}
+	.qv-file-name {
+		width: 80%;
 	}
 	/*
 	******************************************

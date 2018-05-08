@@ -434,9 +434,6 @@ MODAL
     cursor: pointer;
     font-size: 12px;
 }
-#qv-modal-filebroswer {
-    display: none;
-}
 #qv-modal-spinner {
     position: absolute;
     background-color: #ffffff;
@@ -450,8 +447,7 @@ MODAL
     position: absolute;
     background-color: #ffffff;
     width: 100%;
-    font-size: 13px;
-    display: none;
+    font-size: 13px;   
     margin: -20px;
     padding: 20px;
 }
@@ -566,11 +562,6 @@ section {
     margin-left: -43px;
     padding-top: 20px;
 }
-/*
-******************************************
-URL field
-******************************************
-*/
 .qv-url-wrap {
     position: relative;
 }
@@ -600,12 +591,6 @@ URL field
     padding: 7px 16px 6px;
     font-size: 12px;
 }
-
-/*
-******************************************
-Password field
-******************************************
-*/
 .qv-password-wrap {
     position: relative;
     margin-left: -18px;
@@ -632,12 +617,6 @@ Password field
     left: 35px;
     color: #ff0000;
 }
-
-/*
-******************************************
-Drag n Drop
-******************************************
-*/
 .qv-drag-n-drop-wrap {
     border: 2px dashed #ccc;
     background-color: #f8f8f8;
@@ -692,7 +671,6 @@ Drag n Drop
     background: #ddd;
     border-color: #aaa;
 }
-
 /*
 ******************************************
 Document types
@@ -740,7 +718,6 @@ Fade annimation
     -o-transform: translate(0, 0);
     transform: translate(0, 0);
 }
-
 /*
 ******************************************
 Swipe elements

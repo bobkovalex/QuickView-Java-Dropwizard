@@ -127,7 +127,7 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// File or directory click event from file tree
 	//////////////////////////////////////////////////
-	$('.qv-modal-table').on('click', '.qv-filetree-name', function(e){
+	$('.qv-modal-body').on('click', '.qv-filetree-name', function(e){
 		var isDir = $(this).parent().find('.fa-folder').hasClass('fa-folder');
 		if(isDir){
 			// if directory -> browse
@@ -136,6 +136,7 @@ NAV BAR CONTROLS
 			}else{
 				currentDirectory = $(this).text();
 			}
+			toggleModalDialog(false, '');
 			loadFileTree(currentDirectory);
 		}else{
 			// if document -> open
@@ -152,7 +153,7 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Go to parent directory event from file tree
 	//////////////////////////////////////////////////
-	$('.qv-modal-table').on('click', '.qv-filetree-up', function(e){
+	$('.qv-modal-body').on('click', '.qv-filetree-up', function(e){
 		if(currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1){
 			currentDirectory = '';
 		}else{
@@ -340,8 +341,7 @@ NAV BAR CONTROLS
 
 	//////////////////////////////////////////////////
 	// Search next event
-	//////////////////////////////////////////////////
-	
+	//////////////////////////////////////////////////	
 	$('#qv-nav-search-next').on('click', function(e){
 		var count = 0;
 		// remove/clear previously selected highlights
@@ -453,43 +453,12 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	$('#qv-btn-download').on('click', function(e){
 		downloadDocument();
-	});
-	
-	//////////////////////////////////////////////////
-	// Drag n Drop
-	//////////////////////////////////////////////////
-	var dropZone = $('#qv-dropZone');
-        if (typeof dropZone[0] != "undefined") {
-            //Drag n drop functional
-            if ($('#qv-dropZone').length) {
-                if (typeof (window.FileReader) == 'undefined') {
-                    dropZone.text("Your browser doesn't support Drag and Drop");
-                    dropZone.addClass('error');
-                }
-            }
-    
-            dropZone[0].ondragover = function () {
-                dropZone.addClass('hover');
-                return false;
-            };
-    
-            dropZone[0].ondragleave = function () {
-                dropZone.removeClass('hover');
-                return false;
-            };
-    
-            dropZone[0].ondrop = function (event) {
-                event.preventDefault();
-                dropZone.removeClass('hover');
-                var files = event.dataTransfer.files;
-                addFileForUpload(files);
-            };
-        }
+	});	
 	
 	//////////////////////////////////////////////////
 	// Select files for upload event
 	//////////////////////////////////////////////////
-	$('#qv-upload-input').on('change', function(e){
+	$('.qv-modal-body').on('change', '#qv-upload-input', function(e){
 	    // get selected files
 	    var input = $(this);
        	    // add files to the table		
@@ -499,7 +468,7 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Cancel file upload event
 	//////////////////////////////////////////////////
-	 $('#qv-upload-files-table').on('click', ".qv-cancel-button", function(e){
+	 $('.qv-modal-body').on('click', ".qv-cancel-button", function(e){
             // get selected files
             var button = $(this);
             // get file name which will be deleted
@@ -529,13 +498,13 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Upload event
 	//////////////////////////////////////////////////
-	$("#qv-upload-button").on('click', function(e){
+	$(".qv-modal-body").on('click', '#qv-upload-button', function(e){
             // get current number of table rows
-            var tableRows = $('#qv-upload-files-table > div');
-            // initiate URL counter required for proper calculating of the uploaded files in case local files uploaded with URLs
-            var urlCounter = 0;
-            // upload file one by one
-            for (var i = 0; i < tableRows.length; i++) {
+		var tableRows = $('#qv-upload-files-table > div');
+		// initiate URL counter required for proper calculating of the uploaded files in case local files uploaded with URLs
+		var urlCounter = 0;
+		// upload file one by one
+		for (var i = 0; i < tableRows.length; i++) {
 	        // check if current table row contains URL instead of file
 	        if($(tableRows[i]).find("div[data-value]").length > 0) {
 		        // upload URL
@@ -543,31 +512,31 @@ NAV BAR CONTROLS
 		        // increase URL counter
 		        urlCounter++;
 	        } else {
-            // check if the current file already uploaded
-		    var isUploaded = $(tableRows[i]).find("div.qv-filetree-name").data().uploaded;
-		    if(!isUploaded){
-                        // upload local file
-			uploadDocument(uploadFilesList[i - urlCounter], i);
-                        // mark file as uploaded		
-			$(tableRows[i]).find("div.qv-filetree-name").data().uploaded = true;
-		    } else {	
-			continue;
-		    }				
-	        }
-            }
+				// check if the current file already uploaded
+				var isUploaded = $(tableRows[i]).find("div.qv-filetree-name").data().uploaded;
+				if(!isUploaded){
+					// upload local file
+					uploadDocument(uploadFilesList[i - urlCounter], i);
+					// mark file as uploaded		
+					$(tableRows[i]).find("div.qv-filetree-name").data().uploaded = true;					
+				} else {	
+					continue;
+				}				
+			}
+        }
 	});
 	
 	//////////////////////////////////////////////////
 	// Open URL input event
 	//////////////////////////////////////////////////
-	$('#qv-url-button').on('click', function () {
+	$('.qv-modal-body').on('click', '#qv-url-button', function () {
             $('#qv-url-wrap').slideDown('fast');
         });
 	
 	//////////////////////////////////////////////////
 	// Close URL input event
 	//////////////////////////////////////////////////
-	$('#qv-url-cancel').on('click', function () {
+	$('.qv-modal-body').on('click', '#qv-url-cancel', function () {
             $('#qv-url-wrap').slideUp('fast');
             $('#qv-url').val('');
         });
@@ -575,8 +544,8 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Add file via URL event
 	//////////////////////////////////////////////////
-	$('#qv-add-url').on('click', function () {
-            addFileForUpload(null, $("#qv-url").val());
+	$('.qv-modal-body').on('click', '#qv-add-url', function () {
+        addFileForUpload(null, $("#qv-url").val());
 	    $('#qv-url').val('');
         });
 
@@ -590,21 +559,42 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Open modal dialog (file upload) event
 	//////////////////////////////////////////////////
-	$('#qv-btn-upload').on('click', function(e){
-	    $("#qv-upload-section").show();
-	    $("#qv-browse-section").hide();
-		$("#qv-password-section").hide();
-	    toggleModalDialog(true, 'Upload Document');		
+	$('#qv-btn-upload').on('click', function(e){	   
+	    toggleModalDialog(true, 'Upload Document', getHtmlUpload());	
+		var dropZone = $('#qv-dropZone');
+        if (typeof dropZone[0] != "undefined") {
+            //Drag n drop functional
+            if ($('#qv-dropZone').length) {
+                if (typeof (window.FileReader) == 'undefined') {
+                    dropZone.text("Your browser doesn't support Drag and Drop");
+                    dropZone.addClass('error');
+                }
+            }
+    
+            dropZone[0].ondragover = function () {
+                dropZone.addClass('hover');
+                return false;
+            };
+    
+            dropZone[0].ondragleave = function () {
+                dropZone.removeClass('hover');
+                return false;
+            };
+    
+            dropZone[0].ondrop = function (event) {
+                event.preventDefault();
+                dropZone.removeClass('hover');
+                var files = event.dataTransfer.files;
+                addFileForUpload(files);
+            };
+        }
 	});
 	
 	//////////////////////////////////////////////////
 	// Open document button (upload dialog) click
 	//////////////////////////////////////////////////
-	$('#qv-open-document').on('click', function(e){
-	    $("#qv-browse-section").show();
-	    $("#qv-upload-section").hide();
-		$("#qv-password-section").hide();
-	    toggleModalDialog(true, 'Open Document');
+	$('.qv-modal-body').on('click', '#qv-open-document', function(e){	   
+		toggleModalDialog(false, ''); 	
 	    loadFileTree('');	
 	});
 	
@@ -622,12 +612,10 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Submit password button click (password required modal)
 	//////////////////////////////////////////////////
-	$('#qv-password-submit').on('click', function(e){
-	    toggleModalDialog(false, ''); 
-	    $("#qv-browse-section").show();
-		$("#qv-password-section").hide();
-		password = $("#qv-password-input").val();
+	$('.qv-modal-body').on('click', "#qv-password-submit", function(e){
+	    password = $("#qv-password-input").val();
 		$("#qv-password-input").val('');
+		toggleModalDialog(false, ''); 	
 		loadDocument(function(data){
 			// Generate thumbnails
 			generatePagesTemplate(data, data.length, 'thumbnails-');
@@ -637,7 +625,7 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Click on modal body event (used to change slide in swiper)
 	//////////////////////////////////////////////////
-	$('#qv-modal-content').on('click', function(e){
+	$('.qv-modal-body').on('click', '#qv-modal-content', function(e){
 		if(isMobile()){
 			if($("#qv-upload-files-table > div").length > 0){
 			    var swiper = new Swiper(".swiper-container");
@@ -686,6 +674,8 @@ function loadFileTree(dir) {
 		printMessage(returnedData.message);
 		return;
 	    }
+		// assembly modal html
+		toggleModalDialog(true, "Open Document", getHtmlFileBrowser());
 	    // hide loading spinner
 	    $('#qv-modal-spinner').hide();
 	    // clear tree list from previous data
@@ -695,9 +685,7 @@ function loadFileTree(dir) {
 		    '<td class="qv-filetree-up">...</td>'+
 		    '<td></td>'+
 		    '<td></td>'+
-		'</tr>');
-	    // show tree list wrapper
-	    $('#qv-modal-filebroswer').show();
+		'</tr>');	    
 	    // append files to tree list
 	    $.each(returnedData, function(index, elem){
 		// document name
@@ -1034,7 +1022,7 @@ function getElementByClass(target, class_id){
 * @param {boolean} open - open/close value
 * @param {string} title - title to display in modal dialog (popup)
 */
-function toggleModalDialog(open, title){
+function toggleModalDialog(open, title, content){
 	if(open){
 		$('#modalDialog .qv-modal-title').text(title);
 		$('#modalDialog')
@@ -1044,7 +1032,8 @@ function toggleModalDialog(open, title){
 			{ opacity: 1 },
 			{ queue: false, duration: 'fast' }
 			);
-		$('#modalDialog').addClass('in');		
+		$('#modalDialog').addClass('in');
+		$(".qv-modal-body").append(content);
     }else{
 		$('#modalDialog').removeClass('in');
 		$('#modalDialog')
@@ -1055,10 +1044,7 @@ function toggleModalDialog(open, title){
 			{ queue: false, duration: 'fast' }
 			)
 			.css('display', 'none');
-		// hide all contents
-		$('#qv-modal-filebroswer').hide();
-		$('#qv-modal-spinner').hide();
-		$('#qv-modal-error').hide();		
+		$(".qv-modal-body").html("");
     }
 }
 
@@ -1226,10 +1212,9 @@ function clearPageContents(){
 * Clear all data from peviously loaded document
 * @param {string} message - message to diplay in popup
 */
-function printMessage(message){
-    $('#qv-modal-error').show();
-    $('#qv-modal-error').text(message);
-    toggleModalDialog(true, 'Error');		
+function printMessage(message){   
+	var content = '<div id="qv-modal-error">' + message + '</div>';
+    toggleModalDialog(true, 'Error', content);		
 }
 
 /**
@@ -1462,9 +1447,7 @@ function uploadDocument(file, index, url = ''){
 	        // open error popup
 	        printMessage(returnedData.message);
 	        return;
-	    }
-	    // update files tree
-	    loadFileTree('');
+	    }	  
 	},
 	error: function(xhr, status, error) {
 	  var err = eval("(" + xhr.responseText + ")");
@@ -1508,7 +1491,7 @@ function printDocument(){
 function closeModal(){
     // remove all files from the upload list
     uploadFilesList = [];
-    var tableRows = $('#qv-upload-files-table > tbody > tr');
+    var tableRows = $('#qv-upload-files-table > div');
     for(var n = 0; n < tableRows.length; n++){
 	    $(tableRows[n]).remove();
     }
@@ -1516,11 +1499,7 @@ function closeModal(){
     toggleModalDialog(false, '');
 }
 
-function openBrowseModal(){
-	$("#qv-browse-section").show();
-	$("#qv-upload-section").hide();
-	$("#qv-password-section").hide();
-	toggleModalDialog(true, 'Open Document');
+function openBrowseModal(){	
 	loadFileTree('');
 }
 
@@ -1529,11 +1508,14 @@ function openBrowseModal(){
 * @param {string} error - error message
 **/
 function openPasswordModal(error){
-	$("#qv-browse-section").hide();
-	$("#qv-upload-section").hide();
-	$("#qv-modal-error").hide();
-	$("#qv-password-section").show();
-	toggleModalDialog(true, 'Password required');	
+	var passwordSection = '<section id="qv-password-section" class="tab-slider-body">'+		       
+								'<div class="inner-addon left-addon btn qv-password-wrap" id="qv-password-wrap">'+
+									'<input type="password" class="form-control" id="qv-password-input" placeholder="Enter password">'+
+									'<button class="btn btn-primary" id="qv-password-submit">Submit</button>'+
+									'<span class="qv-password-error" style="display: none;"></span>'+
+							    '</div>'+
+							'</section>';	
+	toggleModalDialog(true, 'Password required', passwordSection);	
 	if(error != "" && typeof error != "undefined"){
 		$(".qv-password-error")[0].innerHTML = error;
 		$(".qv-password-error").show();	
@@ -1591,6 +1573,64 @@ function isPageLoaded(selector) {
 	});
 }
 
+/**
+* Get HTML content for file browser modal
+**/
+function getHtmlFileBrowser(){
+	return '<section id="qv-browse-section" class="tab-slider-body">'+
+			'<div id="qv-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>'+					        
+			'<table id="qv-modal-filebroswer" class="qv-modal-table">'+
+			'<thead>'+
+				'<tr>'+
+				'<th class="col-md-1"> </th>'+
+				'<th class="col-md-5">Document</th>'+
+				'<th class="col-md-3">Format</th>'+
+				'<th class="col-md-3">Size</th>'+
+				'</tr>'+
+			'</thead>'+
+			'<tbody>'+
+			// list of files
+			'</tbody>'+
+			'</table>'+
+		'</section>';		
+}
+	
+/**
+* Get HTML content for upload modal
+**/
+function getHtmlUpload(){
+	// upload section
+	var uploadSection = '<section id="qv-upload-section" class="tab-slider-body">'+
+							'<div class="qv-drag-n-drop-wrap" id="qv-dropZone">'+
+								'<div class="qv-drag-n-drop-icon"><i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i></div>'+
+								'<h2>Drag &amp; Drop your files here</h2>'+
+								'<h4>OR</h4>'+
+								'<div class="qv-drag-n-drop-buttons">'+
+									'<label class="btn btn-primary">'+
+										'<i class="fa fa-file"></i>'+
+										'SELECT FILE'+
+										'<input id="qv-upload-input" type="file" multiple style="display: none;">'+
+									'</label>'+
+									'<label class="btn" id="qv-url-button">'+
+										'<i class="fa fa-link"></i>'+
+										'URL'+
+									'</label>'+
+								'</div>'+
+							'</div>'+
+							'<div class="inner-addon left-addon btn qv-url-wrap" id="qv-url-wrap" style="display: none;">'+
+								'<input type="url" class="form-control" id="qv-url" placeholder="Enter your file URL">'+
+								'<button class="btn" id="qv-url-cancel"><i class="fa fa-trash-o"></i></button>'+
+								'<button class="btn btn-primary" id="qv-add-url">Add</button>'+
+							'</div>'+
+							'<div id="qv-upload-files-table">'+									
+								// list of files
+							'</div>'+
+							'<button id="qv-upload-button" type="button" class="btn btn-success" disabled>Upload</button>'+
+							'<button id="qv-open-document" type="button" class="btn">Browse files</button>'+
+						'</section>';  
+	return uploadSection;
+}	
+
 /*
 ******************************************************************
 ******************************************************************
@@ -1640,13 +1680,7 @@ METHODS
 			
 			// assembly html base
 			this.append(getHtmlBase);
-			this.append(getHtmlModalDialog);
-			
-			// assembly modal html
-			$(".qv-modal-body").append(getHtmlFileBrowser);
-			
-			// assembly password modal html
-			getHtmlPassword();
+			this.append(getHtmlModalDialog);	
 
 			// assembly nav bar
 			if(options.zoom){
@@ -1671,8 +1705,7 @@ METHODS
 			}			
 			if(options.upload){
 				$(qv_navbar).append(getHtmlNavUploadPanel);
-				$(qv_navbar).append(getHtmlNavSplitter);	
-				getHtmlUpload();
+				$(qv_navbar).append(getHtmlNavSplitter);					
 			} 			
 			if(options.print){
 			        $(qv_navbar).append(getHtmlNavPrintPanel);
@@ -1760,11 +1793,10 @@ HTML MARKUP
 			            // header
 			            '<div class="qv-modal-header">'+
 							'<div class="qv-modal-close qv-modal-close-action"><span>x</span></div>'+
-							'<h4 class="qv-modal-title">Open Document</h4>'+						
+							'<h4 class="qv-modal-title"></h4>'+						
 			            '</div>'+
 			            // body
-			            '<div class="qv-modal-body">'+
-							'<div id="qv-modal-error">TEST</div>'+
+			            '<div class="qv-modal-body">'+							
 							// modal content will be here							
 						'</div>'+						
 			            // footer
@@ -1857,79 +1889,9 @@ HTML MARKUP
 	        return '<li id="qv-btn-print"><i class="fa fa-print"></i><span class="qv-tooltip">Print</span></li>';
 	}
 	
-	function getHtmlFileBrowser(){
-	    return '<section id="qv-browse-section" class="tab-slider-body">'+
-		        '<div id="qv-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>'+					        
-		        '<table id="qv-modal-filebroswer" class="qv-modal-table">'+
-			    '<thead>'+
-			        '<tr>'+
-				    '<th class="col-md-1"> </th>'+
-				    '<th class="col-md-5">Document</th>'+
-				    '<th class="col-md-3">Format</th>'+
-				    '<th class="col-md-3">Size</th>'+
-			        '</tr>'+
-			    '</thead>'+
-			    '<tbody>'+
-			    // list of files
-			    '</tbody>'+
-		        '</table>'+
-		    '</section>';		
-	}
-	
 	function getHtmlNavUploadPanel(){
 	    return '<li id="qv-btn-upload"><i class="fa fa-upload"></i><span class="qv-tooltip">Upload</span></li>';
 	}	
-	
-	function getHtmlUpload(){
-	    // upload section
-	    var uploadSection = '<section id="qv-upload-section" class="tab-slider-body">'+
-								'<div class="qv-drag-n-drop-wrap" id="qv-dropZone">'+
-								    '<div class="qv-drag-n-drop-icon"><i class="fa fa-cloud-download fa-5x" aria-hidden="true"></i></div>'+
-									'<h2>Drag &amp; Drop your files here</h2>'+
-									'<h4>OR</h4>'+
-									'<div class="qv-drag-n-drop-buttons">'+
-										'<label class="btn btn-primary">'+
-										    '<i class="fa fa-file"></i>'+
-										    'SELECT FILE'+
-										    '<input id="qv-upload-input" type="file" multiple style="display: none;">'+
-										'</label>'+
-										'<label class="btn" id="qv-url-button">'+
-											'<i class="fa fa-link"></i>'+
-											'URL'+
-										'</label>'+
-								    '</div>'+
-							    '</div>'+
-							    '<div class="inner-addon left-addon btn qv-url-wrap" id="qv-url-wrap" style="display: none;">'+
-									'<input type="url" class="form-control" id="qv-url" placeholder="Enter your file URL">'+
-									'<button class="btn" id="qv-url-cancel"><i class="fa fa-trash-o"></i></button>'+
-									'<button class="btn btn-primary" id="qv-add-url">Add</button>'+
-							    '</div>'+
-							    '<div id="qv-upload-files-table">'+									
-									// list of files
-							    '</div>'+
-							    '<button id="qv-upload-button" type="button" class="btn btn-success" disabled>Upload</button>'+
-							    '<button id="qv-open-document" type="button" class="btn">Browse files</button>'+
-						    '</section>';
-	    // add upload section
-	    $(uploadSection).insertAfter($("#qv-browse-section"));
-	    $("#qv-upload-section").hide();
-		
-		
-	}
-	
-	function getHtmlPassword(){
-	    var passwordSection = '<section id="qv-password-section" class="tab-slider-body">'+		       
-								'<div class="inner-addon left-addon btn qv-password-wrap" id="qv-password-wrap">'+
-									'<input type="password" class="form-control" id="qv-password-input" placeholder="Enter password">'+
-									'<button class="btn btn-primary" id="qv-password-submit">Submit</button>'+
-									'<span class="qv-password-error" style="display: none;"></span>'+
-							    '</div>'+
-							'</section>';	
-		// add password section
-	    $(".qv-modal-body").append(passwordSection);
-	    $("#qv-password-section").hide();			
-	}
-	
 })(jQuery);
 
 /*
