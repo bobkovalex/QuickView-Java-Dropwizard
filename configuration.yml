@@ -15,46 +15,69 @@ server:
 # Application configurations
 ################################################
 application:
+  # License path
   # Absolute path to GroupDocs license file
   licensePath: /Users/Alex/Documents/GroupDocs.Viewer.lic
-  # Directory where all original files are stored
+  # Files/Document path
+  # Absolute path to a file storage
   filesDirectory: /Users/Alex/Documents/GroupDocs/
-  # Directory all custom fonts are stored
+  # Fonts path
+  # Absolute path to custom fonts directory
   fontsDirectory: /Users/Alex/Projects/Fonts/CustomFonts/
 
 resources:
-  # Run application as service (only public API)
+  # Run application as service
+  # Set false to run application with embeded resources
   runAsService: false
   ##############################################
   # All params above are required when runAsService: false
   ##############################################
+  # Web resources
   # Url/link to web resources (html, js, css, etc) archive
   resourcesUrl: https://github.com/bobkovalex/QuickView/archive/master.zip
-  # Enable/disable resources downloading, false for download
-  offlineMode: true
-  # Set default document to view
+  # Resources download
+  # Set false to download resources on each application run/restart
+  # Set true to use resources from project
+  offlineMode: false
+  # Default document
+  # Absolute or relative path to default document
   defaultDocument: ''
-  # Enable/disable HTMl rendering mode, false for image mode
+  # HTML rendering mode
+  # Set false for image mode
+  # Set true for HTML mode
   htmlMode: true
-  # Pages to be loaded on document open, 0 for all
+  # Pages preload
+  # How many pages from a document should be loaded, remaining pages will be loaded on page scrolling
+  # Set 0 to load all pages at once
   preloadPageCount: 2
-  # Enable/disable rewrite for uploaded file if file with the same name already exists
+  # File rewriting on document uploading
+  # Set false to keep both files
+  # Set true to replace files with same name
   rewrite: true
-  # Enable/disable document zoom
+  # Document zoom
+  # Set false to disable document zooming
   zoom: true
-  # Enable/disable page navigation
+  # Page navigation
+  # Set false to disable document navigation (go to next, previous, last and first page)
   pageSelector: true
-  # Enable/disable text search
+  # Document search
+  # Set false to disable document text search
   search: true
-  # Enable/disable thumbnails
+  # Thumbnails
+  # Set false to disbale thumbnails
   thumbnails: true
-  # Enable/disable page rotation
+  # Page rotation
+  # Set false to disbale pages rotation
   rotate: true
-  # Enable/disable document download
+  # Document download
+  # Set false to disbale document download
   download: true
-  # Enable/disable document upload
+  # Document upload
+  # Set false to disbale document upload
   upload: true
-  # Enable/disable document print
+  # Document print
+  # Set false to disbale document print
   print: true
-  # Enable/disable documents browse
+  # File browser
+  # Set false to disbale document browse
   browse: true
