@@ -6,7 +6,7 @@
 
     <groupId>com.aliensoft</groupId>
     <artifactId>quickview</artifactId>
-    <version>17.5.0</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>QuickView Dropwizard</name>
@@ -14,14 +14,13 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <groupdocs.viewer>${project.version}</groupdocs.viewer>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.groupdocs</groupId>
             <artifactId>groupdocs-viewer</artifactId>
-            <version>${project.version}</version>
+            <version>17.5.0</version>
             <type>jar</type>
         </dependency>
         <dependency>
