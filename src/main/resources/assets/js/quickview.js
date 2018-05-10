@@ -153,14 +153,14 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Go to parent directory event from file tree
 	//////////////////////////////////////////////////
-	$('.qv-modal-body').on('click', '.qv-filetree-up', function(e){
+	$('.qv-modal-body').on('click', '.qv-go-up', function(e){
 		if(currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1){
 			currentDirectory = '';
 		}else{
 			currentDirectory = currentDirectory.replace(/\/[^\/]+\/?$/, '');	
 		}
 		loadFileTree(currentDirectory);
-	});
+	});	
 
 	//////////////////////////////////////////////////
 	// Zoom values event
@@ -681,8 +681,8 @@ function loadFileTree(dir) {
 	    // clear tree list from previous data
 	    $('#qv-modal-filebroswer tbody').html(
 		'<tr>'+
-		    '<td class="text-center"><i class="fa fa-level-up"></i></td>'+
-		    '<td class="qv-filetree-up">...</td>'+
+		    '<td class="text-center qv-go-up"><i class="fa fa-level-up"></i></td>'+
+		    '<td class="qv-filetree-up qv-go-up">...</td>'+
 		    '<td></td>'+
 		    '<td></td>'+
 		'</tr>');	    
@@ -702,7 +702,7 @@ function loadFileTree(dir) {
 			new_size = (Math.round((size / 1024) * 100) / 100) + ' KB';
 		}
 		// document format
-		var docFormat = (getDocumentFormat(name) == undefined)? 'fa-folder' : getDocumentFormat(name);
+		var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined)? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
 		// append document
 		$('.qv-modal-table tbody').append(
 			'<tr>'+
@@ -974,17 +974,22 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height){
 /**
 * Get document format (type)
 * @param {string} filename - document name
+* @param {boolean} isDirectory - define if the current element is directory or file
 */
-function getDocumentFormat(filename){
-    if(typeof map[filename.split('.').pop().toLowerCase()] == "undefined"){
-		if(filename.split('.').length > 1){
-			return map["unknown"];
+function getDocumentFormat(filename, isDirectory){
+	if(!isDirectory){
+		if(typeof map[filename.split('.').pop().toLowerCase()] == "undefined"){
+			if(filename.split('.').length > 1){
+				return map["unknown"];
+			} else {
+				return map["folder"];
+			}
 		} else {
-			return map["folder"];
+			return map[filename.split('.').pop().toLowerCase()];
 		}
-    } else {
-        return map[filename.split('.').pop().toLowerCase()];
-    }
+	} else {
+		return map["folder"];
+	}
 }
 
 /**
