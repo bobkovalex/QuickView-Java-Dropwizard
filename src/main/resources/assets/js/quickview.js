@@ -3,7 +3,7 @@
  * Copyright (c) 2016 Alexandr Bobkov <lilalex85@gmail.com>
  * Licensed under MIT.
  * @author Alexandr Bobkov
- * @version 1.0.0
+ * @version 1.0.1
  */
 
  /*
@@ -1688,6 +1688,10 @@ METHODS
 			this.append(getHtmlModalDialog);	
 
 			// assembly nav bar
+			if(options.browse){
+				$(qv_navbar).append(getHtmlBrowsePanel);
+				$("#qv-btn-browse").on('click', openBrowseModal);
+			}
 			if(options.zoom){
 				$(qv_navbar).append(getHtmlNavZoomPanel);
 				$(qv_navbar).append(getHtmlNavSplitter);
@@ -1725,9 +1729,6 @@ METHODS
 				// Generate thumbnails
 				generatePagesTemplate(data, data.length, 'thumbnails-');
 			    });
-			}			
-			if(options.browse){
-				$("#qv-header-logo").on('click', openBrowseModal);
 			}
 		}
 	};
@@ -1759,8 +1760,7 @@ HTML MARKUP
 			    '<div class="wrapper">'+
 			        // header BEGIN
 			        '<div id="qv-header">'+
-						'<div id="qv-header-logo">'+
-							'<span class="qv-tooltip">Browse Files</span>'+
+						'<div id="qv-header-logo">'+							
 						'</div>'+
 						
 						// nav bar BEGIN
@@ -1896,6 +1896,9 @@ HTML MARKUP
 	
 	function getHtmlNavUploadPanel(){
 	    return '<li id="qv-btn-upload"><i class="fa fa-upload"></i><span class="qv-tooltip">Upload</span></li>';
+	}	
+	function getHtmlBrowsePanel(){
+	    return '<li id="qv-btn-browse"><i class="fa fa-folder-open"></i><span class="qv-tooltip">Browse files</span></li>';
 	}	
 })(jQuery);
 
