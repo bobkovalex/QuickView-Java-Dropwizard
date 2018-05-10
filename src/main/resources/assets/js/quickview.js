@@ -1,8 +1,8 @@
 /**
- * QuickView Plugin
- * Copyright (c) 2016 Alexandr Bobkov <lilalex85@gmail.com>
+ * GroupDocs Plugin
+ * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT.
- * @author Alexandr Bobkov
+ * @author Aspose Pty Ltd
  * @version 1.0.0
  */
 
@@ -702,7 +702,7 @@ function loadFileTree(dir) {
 			new_size = (Math.round((size / 1024) * 100) / 100) + ' KB';
 		}
 		// document format
-		var docFormat = (getDocumentFormat(name) == undefined)? 'fa-folder' : getDocumentFormat(name);
+		var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined)? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
 		// append document
 		$('.qv-modal-table tbody').append(
 			'<tr>'+
@@ -974,17 +974,22 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height){
 /**
 * Get document format (type)
 * @param {string} filename - document name
+* @param {boolean} isDirectory - define if the current element is directory or file
 */
-function getDocumentFormat(filename){
-    if(typeof map[filename.split('.').pop().toLowerCase()] == "undefined"){
-		if(filename.split('.').length > 1){
-			return map["unknown"];
+function getDocumentFormat(filename, isDirectory){
+	if(!isDirectory){
+		if(typeof map[filename.split('.').pop().toLowerCase()] == "undefined"){
+			if(filename.split('.').length > 1){
+				return map["unknown"];
+			} else {
+				return map["folder"];
+			}
 		} else {
-			return map["folder"];
+			return map[filename.split('.').pop().toLowerCase()];
 		}
-    } else {
-        return map[filename.split('.').pop().toLowerCase()];
-    }
+	} else {
+		return map["folder"];
+	}
 }
 
 /**
