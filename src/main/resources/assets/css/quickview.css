@@ -671,6 +671,9 @@ section {
     background: #ddd;
     border-color: #aaa;
 }
+.qv-go-up{
+	cursor: pointer;
+}
 /*
 ******************************************
 Document types

@@ -3,7 +3,7 @@
  * Copyright (c) 2001-2018 Aspose Pty Ltd
  * Licensed under MIT.
  * @author Aspose Pty Ltd
- * @version 1.0.0
+ * @version 1.0.1
  */
 
  /*
@@ -153,14 +153,14 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Go to parent directory event from file tree
 	//////////////////////////////////////////////////
-	$('.qv-modal-body').on('click', '.qv-filetree-up', function(e){
+	$('.qv-modal-body').on('click', '.qv-go-up', function(e){
 		if(currentDirectory.length > 0 && currentDirectory.indexOf('/') == -1){
 			currentDirectory = '';
 		}else{
 			currentDirectory = currentDirectory.replace(/\/[^\/]+\/?$/, '');	
 		}
 		loadFileTree(currentDirectory);
-	});
+	});	
 
 	//////////////////////////////////////////////////
 	// Zoom values event
@@ -681,8 +681,8 @@ function loadFileTree(dir) {
 	    // clear tree list from previous data
 	    $('#qv-modal-filebroswer tbody').html(
 		'<tr>'+
-		    '<td class="text-center"><i class="fa fa-level-up"></i></td>'+
-		    '<td class="qv-filetree-up">...</td>'+
+		    '<td class="text-center qv-go-up"><i class="fa fa-level-up"></i></td>'+
+		    '<td class="qv-filetree-up qv-go-up">...</td>'+
 		    '<td></td>'+
 		    '<td></td>'+
 		'</tr>');	    
