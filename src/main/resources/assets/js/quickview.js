@@ -3,7 +3,7 @@
  * Copyright (c) 2016 Alexandr Bobkov <lilalex85@gmail.com>
  * Licensed under MIT.
  * @author Alexandr Bobkov
- * @version 1.0.1
+ * @version 1.0.2
  */
 
  /*
@@ -20,7 +20,7 @@ var uploadFilesList = [];
 var documentGuid;
 var htmlMode = false;
 var documentData = [];
-var password = "";
+var password = '';
 var rewrite;
 var map = {};
 // add supported formats
@@ -468,30 +468,30 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	// Cancel file upload event
 	//////////////////////////////////////////////////
-	 $('.qv-modal-body').on('click', ".qv-cancel-button", function(e){
-            // get selected files
-            var button = $(this);
-            // get file name which will be deleted
-            var fileName = button.closest("div").parent().parent().find("div.qv-file-name")[0].innerHTML;
-            // find its index in the array
-            for(var i = 0; i < uploadFilesList.length; i++){
-              if(uploadFilesList[i].name == fileName){
-                  // remove file from the files array
-                  uploadFilesList.splice(i, 1);
-              }
-            }
-            // remove table row
-       	   button.closest("div").parent().parent().parent().remove();
+	$('.qv-modal-body').on('click', ".qv-cancel-button", function(e){
+        // get selected files
+        var button = $(this);
+        // get file name which will be deleted
+        var fileName = button.closest("div").parent().parent().find("div.qv-file-name")[0].innerHTML;
+        // find its index in the array
+        for(var i = 0; i < uploadFilesList.length; i++){
+          if(uploadFilesList[i].name == fileName){
+              // remove file from the files array
+              uploadFilesList.splice(i, 1);
+          }
+        }
+        // remove table row
+		button.closest('div').parent().parent().parent().remove();
 	    $('#qv-upload-input').val('');
 	    // recalculate indexes in the files table
 	    var tableRows = $('#qv-upload-files-table > div');
 	    for(var n = 0; n < tableRows.length; n++){
-		$(tableRows[n]).find("div.qv-pregress").attr("id", "qv-pregress-bar-" + n);
-		$(tableRows[n]).find("div.qv-upload-complete").attr("id", "qv-upload-complete-" + n);
+			$(tableRows[n]).find('div.qv-pregress').attr('id', 'qv-pregress-bar-' + n);
+			$(tableRows[n]).find("div.qv-upload-complete").attr('id', 'qv-upload-complete-' + n);
 	    }
 	    // if table is empty disable upload button
 	    if(tableRows.length == 0){
-		$("#qv-upload-button").prop("disabled", true);
+			$('#qv-upload-button').prop('disabled', true);
 	    }
 	});
 	
@@ -530,16 +530,16 @@ NAV BAR CONTROLS
 	// Open URL input event
 	//////////////////////////////////////////////////
 	$('.qv-modal-body').on('click', '#qv-url-button', function () {
-            $('#qv-url-wrap').slideDown('fast');
-        });
+        $('#qv-url-wrap').slideDown('fast');
+	});
 	
 	//////////////////////////////////////////////////
 	// Close URL input event
 	//////////////////////////////////////////////////
 	$('.qv-modal-body').on('click', '#qv-url-cancel', function () {
-            $('#qv-url-wrap').slideUp('fast');
-            $('#qv-url').val('');
-        });
+        $('#qv-url-wrap').slideUp('fast');
+        $('#qv-url').val('');
+    });
 	
 	//////////////////////////////////////////////////
 	// Add file via URL event
@@ -547,13 +547,13 @@ NAV BAR CONTROLS
 	$('.qv-modal-body').on('click', '#qv-add-url', function () {
         addFileForUpload(null, $("#qv-url").val());
 	    $('#qv-url').val('');
-        });
+    });
 
 	//////////////////////////////////////////////////
 	// Print event
 	//////////////////////////////////////////////////
 	$('#qv-btn-print').on('click', function(e){
-            printDocument();
+        printDocument();
 	});
 	
 	//////////////////////////////////////////////////
@@ -602,10 +602,10 @@ NAV BAR CONTROLS
 	// Open search event
 	//////////////////////////////////////////////////
 	$('#qv-btn-search').on('click', function(e){
-	    if($("#qv-nav-search-container").parent().find("span").is(":visible")){
-			$("#qv-nav-search-container").parent().find("span").css("display", "none");
+	    if($('#qv-nav-search-container').parent().find('span').is(':visible')){
+			$('#qv-nav-search-container').parent().find('span').css('display', 'none');
 		} else {
-			$("#qv-nav-search-container").parent().find("span").css("display", "initial");
+			$('#qv-nav-search-container').parent().find('span').css('display', 'initial');
 		}
 	});
 	
@@ -613,8 +613,8 @@ NAV BAR CONTROLS
 	// Submit password button click (password required modal)
 	//////////////////////////////////////////////////
 	$('.qv-modal-body').on('click', "#qv-password-submit", function(e){
-	    password = $("#qv-password-input").val();
-		$("#qv-password-input").val('');
+	    password = $('#qv-password-input').val();
+		$('#qv-password-input').val('');
 		toggleModalDialog(false, ''); 	
 		loadDocument(function(data){
 			// Generate thumbnails
@@ -627,9 +627,9 @@ NAV BAR CONTROLS
 	//////////////////////////////////////////////////
 	$('.qv-modal-body').on('click', '#qv-modal-content', function(e){
 		if(isMobile()){
-			if($("#qv-upload-files-table > div").length > 0){
-			    var swiper = new Swiper(".swiper-container");
-				if(typeof swiper.length == "undefined"){
+			if($('#qv-upload-files-table > div').length > 0){
+			    var swiper = new Swiper('.swiper-container');
+				if(typeof swiper.length == 'undefined'){
 				   swiper.slideNext();
 				   swiper.slidePrev();
 			    }
@@ -664,59 +664,52 @@ function loadFileTree(dir) {
     $('#qv-modal-spinner').show();
     // get data
     $.ajax({
-	type: 'POST',
-	url: getApplicationPath('loadFileTree'),
-	data: JSON.stringify(data),
-	contentType: "application/json",
-	success: function(returnedData) {
-	    if(returnedData.message != undefined){
-		// open error popup
-		printMessage(returnedData.message);
-		return;
-	    }
-		// assembly modal html
-		toggleModalDialog(true, "Open Document", getHtmlFileBrowser());
-	    // hide loading spinner
-	    $('#qv-modal-spinner').hide();
-	    // clear tree list from previous data
-	    $('#qv-modal-filebroswer tbody').html(
-		'<tr>'+
-		    '<td class="text-center qv-go-up"><i class="fa fa-level-up"></i></td>'+
-		    '<td class="qv-filetree-up qv-go-up">...</td>'+
-		    '<td></td>'+
-		    '<td></td>'+
-		'</tr>');	    
-	    // append files to tree list
-	    $.each(returnedData, function(index, elem){
-		// document name
-		var name = elem.name;
-		// document guid
-		var guid = elem.guid;
-		// document size
-		var size = elem.size;
-		// convert to proper size
-		var new_size = size + ' Bytes';
-		if((size / 1024 / 1024) > 1){
-			new_size = (Math.round((size / 1024 / 1024) * 100) / 100) + ' MB';
-		}else if((size / 1024) > 1){
-			new_size = (Math.round((size / 1024) * 100) / 100) + ' KB';
+		type: 'POST',
+		url: getApplicationPath('loadFileTree'),
+		data: JSON.stringify(data),
+		contentType: 'application/json',
+		success: function(returnedData) {
+		    if(returnedData.message != undefined){
+				// open error popup
+				printMessage(returnedData.message);
+				return;
+		    }
+			// assembly modal html
+			$('.qv-modal-body').html(''); // clear previous data
+			toggleModalDialog(true, "Open Document", getHtmlFileBrowser());
+		    // hide loading spinner
+		    $('#qv-modal-spinner').hide();
+		    // append files to tree list
+		    $.each(returnedData, function(index, elem){
+				// document name
+				var name = elem.name;
+				// document guid
+				var guid = elem.guid;
+				// document size
+				var size = elem.size;
+				// convert to proper size
+				var new_size = size + ' Bytes';
+				if((size / 1024 / 1024) > 1){
+					new_size = (Math.round((size / 1024 / 1024) * 100) / 100) + ' MB';
+				}else if((size / 1024) > 1){
+					new_size = (Math.round((size / 1024) * 100) / 100) + ' KB';
+				}
+				// document format
+				var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined)? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
+				// append document
+				$('.qv-modal-table tbody').append(
+					'<tr>'+
+					'<td><i class="fa ' + docFormat.icon + '"></i></td>'+
+					'<td class="qv-filetree-name" data-guid="' + guid + '"><div class="qv-file-name">' + name + '</div></td>'+
+					'<td>' + docFormat.format + '</td>'+
+					'<td>' + new_size + '</td>'+
+				'</tr>');
+		    });
+		},
+		error: function(xhr, status, error) {
+		  var err = eval("(" + xhr.responseText + ")");
+		  console.log(err.Message);
 		}
-		// document format
-		var docFormat = (getDocumentFormat(name, elem.isDirectory) == undefined)? 'fa-folder' : getDocumentFormat(name, elem.isDirectory);
-		// append document
-		$('.qv-modal-table tbody').append(
-			'<tr>'+
-			'<td><i class="fa ' + docFormat.icon + '"></i></td>'+
-			'<td class="qv-filetree-name" data-guid="' + guid + '"><div class="qv-file-name">' + name + '</div></td>'+
-			'<td>' + docFormat.format + '</td>'+
-			'<td>' + new_size + '</td>'+
-		'</tr>');
-	    });
-	},
-	error: function(xhr, status, error) {
-	  var err = eval("(" + xhr.responseText + ")");
-	  console.log(err.Message);
-	}
     });
 }
 
@@ -730,39 +723,39 @@ function loadDocument(callback){
 	// get document description
 	var data = {guid: documentGuid, htmlMode: htmlMode, password: password};	
 	$.ajax({
-	type: 'POST',
-	url: getApplicationPath('loadDocumentDescription'),
-	data: JSON.stringify(data),
-	contentType: "application/json",
-	success: function(returnedData) {
-		if(returnedData.message != undefined){
-			if(returnedData.message == "Password Required"){							
-				openPasswordModal();
-			} else if(returnedData.message == "Incorrect password"){
-				openPasswordModal(returnedData.message);
-				return;	
-			} else {			
-				// open error popup
-				printMessage(returnedData.message);
+		type: 'POST',
+		url: getApplicationPath('loadDocumentDescription'),
+		data: JSON.stringify(data),
+		contentType: "application/json",
+		success: function(returnedData) {
+			if(returnedData.message != undefined){
+				if(returnedData.message == "Password Required"){							
+					openPasswordModal();
+				} else if(returnedData.message == "Incorrect password"){
+					openPasswordModal(returnedData.message);
+					return;	
+				} else {			
+					// open error popup
+					printMessage(returnedData.message);
+				}
+				return;
 			}
-			return;
+			// get total page number
+			var totalPageNumber = returnedData.length;
+			// set total page number on navigation panel
+			setNavigationPageValues('1', totalPageNumber);
+			// set current document data globally
+			documentData = returnedData;		
+			// render pages		
+			generatePagesTemplate(returnedData, totalPageNumber);			
+		},
+		error: function(xhr, status, error) {
+			var err = eval("(" + xhr.responseText + ")");
+			console.log(err.Message);
 		}
-		// get total page number
-		var totalPageNumber = returnedData.length;
-		// set total page number on navigation panel
-		setNavigationPageValues('1', totalPageNumber);
-		// set current document data globally
-		documentData = returnedData;		
-		// render pages		
-		generatePagesTemplate(returnedData, totalPageNumber);			
-	},
-	error: function(xhr, status, error) {
-		var err = eval("(" + xhr.responseText + ")");
-		console.log(err.Message);
-	}
 	}).done(function(data){
-	// return POST data
-	callback(data);
+		// return POST data
+		callback(data);
 	});	
 }
 
@@ -796,26 +789,26 @@ function generatePagesTemplate(data, totalPageNumber, prefix){
 		} else {
 			counter = preloadPageCount;
 		}	
-		if(prefix == ""){
+		if(prefix == ''){
 			// get page according to the pre-load page number
 			if(preloadPageCount > 0){
 				for(var i = 0; i < counter; i++){
 					// render page
-					appendHtmlContent(i + 1, documentGuid, "", data[i].Width, data[i].Height);		
+					appendHtmlContent(i + 1, documentGuid, '', data[i].Width, data[i].Height);		
 				}	
 							
 			} else {
 				// get all pages
 				for(var i = 0; i < totalPageNumber; i++){
-					appendHtmlContent(i + 1, documentGuid, "", data[i].Width, data[i].Height);	
+					appendHtmlContent(i + 1, documentGuid, '', data[i].Width, data[i].Height);	
 				}							
 			}	
 		} else {
 			// load all thumbnails only when any of document pages is loaded.
 			// this is required to fix issue with thumbnails resolution
-			isPageLoaded($("#qv-page-1")).then(function(element) {
+			isPageLoaded($('#qv-page-1')).then(function(element) {
 				for(var i = 0; i < totalPageNumber; i++){
-					appendHtmlContent(i + 1, documentGuid, "thumbnails-", data[i].Width, data[i].Height);	
+					appendHtmlContent(i + 1, documentGuid, 'thumbnails-', data[i].Width, data[i].Height);	
 				}
 			});
 		}
@@ -838,136 +831,136 @@ function appendHtmlContent(pageNumber, documentName, prefix, width, height){
     var qv_page = $('#qv-page-' + pageNumber);
 
     if(!qv_prefix_page.hasClass('loaded')){
-	qv_prefix_page.addClass('loaded');
-	// get document description
-	var data = {guid: documentGuid, page: pageNumber, htmlMode: htmlMode, password: password};
-	$.ajax({
-	    type: 'POST',
-	    url: getApplicationPath('loadDocumentPage'),
-	    data: JSON.stringify(data),
-	    contentType: "application/json",
-	    success: function(htmlData) {
-			if(htmlData.error != undefined){
-				// open error popup
-				printMessage(htmlData.error);
-				return;
-			}			
-			
-			// fix zoom in/out scaling
-			var zoomValue = 1;
-			// append page content in HTML mode
-			if(htmlMode){
-				// append page
-				qv_prefix_page.append('<div class="qv-wrapper">' + htmlData.pageHtml + '</div>');
-				// remove spinner
-				qv_prefix_page.find('.qv-page-spinner').hide();
-				// fix to avoid using the spinner DIV size
-				if(preloadPageCount == 0){
-					if(qv_page.innerWidth() >= width - 1 &&  qv_page.innerHeight() >= height - 1){
-						width = qv_page.innerWidth();
-						height =  qv_page.innerHeight();
-					}
-				} else {
-					// set correct width and height for document pages
-					if(prefix == ""){
+		qv_prefix_page.addClass('loaded');
+		// get document description
+		var data = {guid: documentGuid, page: pageNumber, htmlMode: htmlMode, password: password};
+		$.ajax({
+		    type: 'POST',
+		    url: getApplicationPath('loadDocumentPage'),
+		    data: JSON.stringify(data),
+		    contentType: "application/json",
+		    success: function(htmlData) {
+				if(htmlData.error != undefined){
+					// open error popup
+					printMessage(htmlData.error);
+					return;
+				}			
+				
+				// fix zoom in/out scaling
+				var zoomValue = 1;
+				// append page content in HTML mode
+				if(htmlMode){
+					// append page
+					qv_prefix_page.append('<div class="qv-wrapper">' + htmlData.pageHtml + '</div>');
+					// remove spinner
+					qv_prefix_page.find('.qv-page-spinner').hide();
+					// fix to avoid using the spinner DIV size
+					if(preloadPageCount == 0){
 						if(qv_page.innerWidth() >= width - 1 &&  qv_page.innerHeight() >= height - 1){
 							width = qv_page.innerWidth();
 							height =  qv_page.innerHeight();
 						}
 					} else {
-						// set correct width and height for thumbnails
-						if(width > height && htmlData.angle == 0){
-							// change the width and height in places if page is landscape oriented
-							width = $("#qv-page-1").innerHeight();
-							height = $("#qv-page-1").innerWidth();
+						// set correct width and height for document pages
+						if(prefix == ""){
+							if(qv_page.innerWidth() >= width - 1 &&  qv_page.innerHeight() >= height - 1){
+								width = qv_page.innerWidth();
+								height =  qv_page.innerHeight();
+							}
 						} else {
-							// use first document page sezie to fix thumbnails size issue
-							width = $("#qv-page-1").innerWidth();
-							height = $("#qv-page-1").innerHeight();
+							// set correct width and height for thumbnails
+							if(width > height && htmlData.angle == 0){
+								// change the width and height in places if page is landscape oriented
+								width = $("#qv-page-1").innerHeight();
+								height = $("#qv-page-1").innerWidth();
+							} else {
+								// use first document page sezie to fix thumbnails size issue
+								width = $("#qv-page-1").innerWidth();
+								height = $("#qv-page-1").innerHeight();
+							}
 						}
+					}			
+					// check if page is horizontally displayed
+					if(width > height || width >= $(window).width()){
+						zoomValue = 0.79;
+					}				
+					// set correct size
+					qv_prefix_page.css('width', width);
+					qv_prefix_page.css('height', height);
+					qv_prefix_page.css('zoom', zoomValue);
+				// render document in image mode
+				} else {			
+					qv_prefix_page.find('.qv-page-spinner').hide();
+					// check if page is horizontally displayed
+					if(width > height){
+						zoomValue = 0.79;
+					} 			
+					// if current document if image file fix its zoom
+					if(getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0){
+						if(prefix == "thumbnails-"){
+							if(width > ($("#qv-thumbnails").width() * 2)){
+								zoomValue = 0.5;
+							} else {
+								zoomValue = 1.2;
+							}
+						} else {
+							if(width > $(window).width()){
+								zoomValue = 0.79;
+							}
+						}						
+					} else {
+						zoomValue = 1.2;
+					}
+					// set correct size
+					qv_prefix_page.css('width', width);
+					qv_prefix_page.css('height', height);
+					qv_prefix_page.css('zoom', zoomValue);
+					// append page image, in image mode append occurred after setting the size to avoid zero size usage
+					qv_prefix_page.append('<div class="qv-wrapper">'+
+											'<image style="width: inherit !important" class="qv-page-image" src="data:image/png;base64,' + htmlData.pageImage + '" alt></image>'+
+										'</div>');
+				}					
+				// set correct width and hight for OneNote format
+				if(documentName.substr((documentName.lastIndexOf('.') +1)) == "one"){
+					if(htmlMode){
+						$(".qv-wrapper").css("width", "initial");
+					} else {
+						$(".qv-wrapper").css("width", "inherit");
 					}
 				}			
-				// check if page is horizontally displayed
-				if(width > height || width >= $(window).width()){
-					zoomValue = 0.79;
-				}				
-				// set correct size
-				qv_prefix_page.css('width', width);
-				qv_prefix_page.css('height', height);
-				qv_prefix_page.css('zoom', zoomValue);
-			// render document in image mode
-			} else {			
-				qv_prefix_page.find('.qv-page-spinner').hide();
-				// check if page is horizontally displayed
-				if(width > height){
-					zoomValue = 0.79;
-				} 			
-				// if current document if image file fix its zoom
-				if(getDocumentFormat(documentGuid).icon.search("image") > 0 || getDocumentFormat(documentGuid).icon.search("photo") > 0){
-					if(prefix == "thumbnails-"){
-						if(width > ($("#qv-thumbnails").width() * 2)){
-							zoomValue = 0.5;
+				// rotate page if it were rotated earlier
+				if(htmlData.angle != 0){
+					qv_prefix_page.css('animation', 'none'); 
+					qv_prefix_page.css('transition-property', 'none');
+					qv_prefix_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
+					if(htmlData.angle == 90 || htmlData.angle == 270){
+						// set styles for HTML mode
+						if(htmlMode){
+							qv_page.addClass("qv-landscape");
+							if(prefix == "thumbnails-"){
+								qv_prefix_page.addClass("qv-thumbnails-landscape");
+							}
 						} else {
-							zoomValue = 1.2;
+							// set style for image mode
+							qv_page.addClass("qv-landscape-image");	
+							if(prefix == "thumbnails-"){
+								qv_prefix_page.addClass("qv-thumbnails-landscape-image");	
+								qv_prefix_page.find("img").removeClass("qv-page-image");							
+							}
 						}
 					} else {
-						if(width > $(window).width()){
-							zoomValue = 0.79;
-						}
-					}						
-				} else {
-					zoomValue = 1.2;
-				}
-				// set correct size
-				qv_prefix_page.css('width', width);
-				qv_prefix_page.css('height', height);
-				qv_prefix_page.css('zoom', zoomValue);
-				// append page image, in image mode append occurred after setting the size to avoid zero size usage
-				qv_prefix_page.append('<div class="qv-wrapper">'+
-										'<image style="width: inherit !important" class="qv-page-image" src="data:image/png;base64,' + htmlData.pageImage + '" alt></image>'+
-									'</div>');
-			}					
-			// set correct width and hight for OneNote format
-			if(documentName.substr((documentName.lastIndexOf('.') +1)) == "one"){
-				if(htmlMode){
-					$(".qv-wrapper").css("width", "initial");
-				} else {
-					$(".qv-wrapper").css("width", "inherit");
-				}
-			}			
-			// rotate page if it were rotated earlier
-			if(htmlData.angle != 0){
-				qv_prefix_page.css('animation', 'none'); 
-				qv_prefix_page.css('transition-property', 'none');
-				qv_prefix_page.css('transform', 'rotate(' + htmlData.angle + 'deg)');
-				if(htmlData.angle == 90 || htmlData.angle == 270){
-					// set styles for HTML mode
-					if(htmlMode){
-						qv_page.addClass("qv-landscape");
-						if(prefix == "thumbnails-"){
-							qv_prefix_page.addClass("qv-thumbnails-landscape");
-						}
-					} else {
-						// set style for image mode
-						qv_page.addClass("qv-landscape-image");	
-						if(prefix == "thumbnails-"){
-							qv_prefix_page.addClass("qv-thumbnails-landscape-image");	
-							qv_prefix_page.find("img").removeClass("qv-page-image");							
-						}
-					}
-				} else {
-					qv_page.removeClass("qv-landscape");
-					qv_prefix_page.removeClass("qv-thumbnails-landscape");				
-					qv_page.removeClass("qv-landscape-image");
-					qv_prefix_page.removeClass("qv-thumbnails-landscape-image");
-				}				
-			}			
-	    },
-	    error: function(xhr, status, error) {
-	        var err = eval("(" + xhr.responseText + ")");
-	        console.log(err.Message);
-	    }
-	});
+						qv_page.removeClass("qv-landscape");
+						qv_prefix_page.removeClass("qv-thumbnails-landscape");				
+						qv_page.removeClass("qv-landscape-image");
+						qv_prefix_page.removeClass("qv-thumbnails-landscape-image");
+					}				
+				}			
+		    },
+		    error: function(xhr, status, error) {
+		        var err = eval("(" + xhr.responseText + ")");
+		        console.log(err.Message);
+		    }
+		});
     }
 }
 
@@ -998,11 +991,11 @@ function getDocumentFormat(filename, isDirectory){
 */
 function getApplicationPath(context){
     if(applicationPath != null){
-	if(applicationPath.slice(-1) == '/'){
-	    return applicationPath + context;
-	}else{
-	    return applicationPath + "/" + context;
-	}
+		if(applicationPath.slice(-1) == '/'){
+		    return applicationPath + context;
+		}else{
+		    return applicationPath + "/" + context;
+		}
     }else{
         return context;
     }
@@ -1016,9 +1009,9 @@ function getApplicationPath(context){
 function getElementByClass(target, class_id){
     var elem = target.find(class_id);
     if(!elem.hasClass(class_id.slice(1))){
-	return getElementByClass(target.parent(), class_id);
+		return getElementByClass(target.parent(), class_id);
     }else{
-	return elem;
+		return elem;
     }
 }
 
@@ -1034,8 +1027,8 @@ function toggleModalDialog(open, title, content){
 			.css('opacity', 0)
 			.fadeIn('fast')
 			.animate(
-			{ opacity: 1 },
-			{ queue: false, duration: 'fast' }
+				{ opacity: 1 },
+				{ queue: false, duration: 'fast' }
 			);
 		$('#modalDialog').addClass('in');
 		$(".qv-modal-body").append(content);
@@ -1045,11 +1038,11 @@ function toggleModalDialog(open, title, content){
 			.css('opacity', 1)
 			.fadeIn('fast')
 			.animate(
-			{ opacity: 0 },
-			{ queue: false, duration: 'fast' }
+				{ opacity: 0 },
+				{ queue: false, duration: 'fast' }
 			)
 			.css('display', 'none');
-		$(".qv-modal-body").html("");
+		$(".qv-modal-body").html('');
     }
 }
 
@@ -1060,23 +1053,23 @@ function toggleModalDialog(open, title, content){
 function toggleNavDropdown(target){
     var isOpened = target.hasClass('opened');
     if(!isOpened){
-	$(target).addClass('opened');
-	$(target)
-	    .css('opacity', 0)
-	    .slideDown('fast')
-	    .animate(
-		{ opacity: 1 },
-		{ queue: false, duration: 'fast' }
-	    );
+		$(target).addClass('opened');
+		$(target)
+		    .css('opacity', 0)
+		    .slideDown('fast')
+		    .animate(
+				{ opacity: 1 },
+				{ queue: false, duration: 'fast' }
+		    );
     }else{
-	$(target).removeClass('opened');
-	$(target)
-	    .css('opacity', 1)
-	    .slideUp('fast')
-	    .animate(
-		{ opacity: 0 },
-		{ queue: false, duration: 'fast' }
-	    );
+		$(target).removeClass('opened');
+		$(target)
+		    .css('opacity', 1)
+		    .slideUp('fast')
+		    .animate(
+				{ opacity: 0 },
+				{ queue: false, duration: 'fast' }
+		    );
     }
 }
 
@@ -1087,30 +1080,30 @@ function toggleNavDropdown(target){
 function highlightSearch(text) {
     clearHighlightSearch();
     if(text.length > 1){
-	var textNodes = $('#qv-pages .qv-wrapper div').find('*').contents().filter(function() { 
-		return this.nodeType === 3;
-	});
-	textNodes.each(function() {
-	    var $this = $(this);
-	    var content = $this.text();
-	    // ignor upper/lower cases
-	    var regEx = new RegExp(text, "ig");
-	    // find mattching string
-	    var str_start = content.search(regEx);
-	    var originalString = 'did not worked!';
-	    if(str_start >= 0){
-		var originalString = content.substring(str_start, str_start + text.length);
-	    }
-	    // add highlight
-	    content = content.replace(regEx, '<span class="qv-highlight">' + originalString + '</span>');
-	    // update to new content
-	    $this.replaceWith(content);
-	});
-	var totalSearchMatches = getTotalSearchMatches();
-	setSearchMatchCount(0, totalSearchMatches);
-	if(totalSearchMatches > 0){
-	    $('#qv-nav-search-next').click();
-	}
+		var textNodes = $('#qv-pages .qv-wrapper div').find('*').contents().filter(function() { 
+			return this.nodeType === 3;
+		});
+		textNodes.each(function() {
+		    var $this = $(this);
+		    var content = $this.text();
+		    // ignor upper/lower cases
+		    var regEx = new RegExp(text, "ig");
+		    // find mattching string
+		    var str_start = content.search(regEx);
+		    var originalString = 'did not worked!';
+		    if(str_start >= 0){
+			var originalString = content.substring(str_start, str_start + text.length);
+		    }
+		    // add highlight
+		    content = content.replace(regEx, '<span class="qv-highlight">' + originalString + '</span>');
+		    // update to new content
+		    $this.replaceWith(content);
+		});
+		var totalSearchMatches = getTotalSearchMatches();
+		setSearchMatchCount(0, totalSearchMatches);
+		if(totalSearchMatches > 0){
+		    $('#qv-nav-search-next').click();
+		}
     }
 }
 
@@ -1191,7 +1184,7 @@ function clearHighlightSearch(){
     $('#qv-pages .qv-highlight').contents().unwrap();
     // normalize text
     $('#qv-pages').each(function(index, element){
-	element.normalize();
+		element.normalize();
     });
     search_position = 0;
 }
@@ -1209,7 +1202,7 @@ function clearPageContents(){
     $('#qv-thumbnails-panzoom').html('');
     // go to top
     $('#qv-pages').scrollTo(0, {
-	duration: 0
+		duration: 0
     });
 }
 
@@ -1230,13 +1223,13 @@ function scrollToPage(pageNumber){
     // get zoom value
     var zoomValue = $('#qv-panzoom').css('zoom');
     if(zoomValue == 'undefined'){
-	zoomValue = 100;
+		zoomValue = 100;
     }else{
-	zoomValue = zoomValue * 100;
+		zoomValue = zoomValue * 100;
     }
     // scroll
     $('#qv-pages').scrollTo('#qv-page-' + pageNumber, {
-	zoom: zoomValue
+		zoom: zoomValue
     });
 }
 
@@ -1254,47 +1247,47 @@ function rotatePages(angle){
     // Prepare ajax data
     var data = {guid: documentGuid, angle: angle, pages: pages, htmlMode: htmlMode, password: password};
     $.ajax({
-	type: 'POST',
-	url: getApplicationPath('rotateDocumentPages'),
-	data: JSON.stringify(data),
-	contentType: "application/json",
-	success: function(returnedData) {
-	    if(returnedData.message != undefined){
-		// open error popup
-		printMessage(returnedData.message);
-		return;
-	    }
-	    $.each(returnedData, function(index, elem){
-			// Rotate the page
-			$('#qv-page-' + elem.pageNumber).css('animation', 'none'); 
-			$('#qv-page-' + elem.pageNumber).css('transition-property', 'none');
-			$('#qv-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');
-			// set correct styles when page has landscape orientation
-			if(elem.angle == 90 || elem.angle == 270){
-				if(htmlMode){
-					$('#qv-page-' + elem.pageNumber).addClass("qv-landscape");
-					$('#qv-thumbnails-page-' + elem.pageNumber).addClass("qv-thumbnails-landscape");	
+		type: 'POST',
+		url: getApplicationPath('rotateDocumentPages'),
+		data: JSON.stringify(data),
+		contentType: "application/json",
+		success: function(returnedData) {
+		    if(returnedData.message != undefined){
+			// open error popup
+			printMessage(returnedData.message);
+			return;
+		    }
+		    $.each(returnedData, function(index, elem){
+				// Rotate the page
+				$('#qv-page-' + elem.pageNumber).css('animation', 'none'); 
+				$('#qv-page-' + elem.pageNumber).css('transition-property', 'none');
+				$('#qv-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');
+				// set correct styles when page has landscape orientation
+				if(elem.angle == 90 || elem.angle == 270){
+					if(htmlMode){
+						$('#qv-page-' + elem.pageNumber).addClass("qv-landscape");
+						$('#qv-thumbnails-page-' + elem.pageNumber).addClass("qv-thumbnails-landscape");	
+					} else {
+						$('#qv-page-' + elem.pageNumber).addClass("qv-landscape-image");	
+						$('#qv-thumbnails-page-' + elem.pageNumber).addClass("qv-thumbnails-landscape-image");	
+						$('#qv-thumbnails-page-' + elem.pageNumber).find("img").removeClass("qv-page-image");							
+					}
 				} else {
-					$('#qv-page-' + elem.pageNumber).addClass("qv-landscape-image");	
-					$('#qv-thumbnails-page-' + elem.pageNumber).addClass("qv-thumbnails-landscape-image");	
-					$('#qv-thumbnails-page-' + elem.pageNumber).find("img").removeClass("qv-page-image");							
-				}
-			} else {
-				$('#qv-page-' + elem.pageNumber).removeClass("qv-landscape");
-				$('#qv-thumbnails-page-' + elem.pageNumber).removeClass("qv-thumbnails-landscape");				
-				$('#qv-page-' + elem.pageNumber).removeClass("qv-landscape-image");
-				$('#qv-thumbnails-page-' + elem.pageNumber).removeClass("qv-thumbnails-landscape-image");
-			}	
-	        // rotate page thumbnail
-			$('#qv-thumbnails-page-' + elem.pageNumber).css('animation', 'none'); 
-			$('#qv-thumbnails-page-' + elem.pageNumber).css('transition-property', 'none');
-	        $('#qv-thumbnails-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');					
-	    });	   
-	},
-	error: function(xhr, status, error) {
-	  var err = eval("(" + xhr.responseText + ")");
-	  console.log(err.Message);
-	}
+					$('#qv-page-' + elem.pageNumber).removeClass("qv-landscape");
+					$('#qv-thumbnails-page-' + elem.pageNumber).removeClass("qv-thumbnails-landscape");				
+					$('#qv-page-' + elem.pageNumber).removeClass("qv-landscape-image");
+					$('#qv-thumbnails-page-' + elem.pageNumber).removeClass("qv-thumbnails-landscape-image");
+				}	
+		        // rotate page thumbnail
+				$('#qv-thumbnails-page-' + elem.pageNumber).css('animation', 'none'); 
+				$('#qv-thumbnails-page-' + elem.pageNumber).css('transition-property', 'none');
+		        $('#qv-thumbnails-page-' + elem.pageNumber).css('transform', 'rotate(' + elem.angle + 'deg)');					
+		    });	   
+		},
+		error: function(xhr, status, error) {
+		  var err = eval("(" + xhr.responseText + ")");
+		  console.log(err.Message);
+		}
     });
 }
 
@@ -1303,11 +1296,11 @@ function rotatePages(angle){
 */
 function downloadDocument(){
     if(documentGuid != "" && typeof documentGuid != "undefined"){
-	// Open download dialog
-	window.location.assign(getApplicationPath('downloadDocument/?path=') + documentGuid);
+		// Open download dialog
+		window.location.assign(getApplicationPath('downloadDocument/?path=') + documentGuid);
     } else {
-	// open error popup
-	printMessage("Please open document first");
+		// open error popup
+		printMessage("Please open document first");
     }
 }
 
@@ -1350,46 +1343,46 @@ function addFileForUpload(uploadFiles, url) {
 		// increase table rows counter after adding new record
 		tableRowsNumber++			
     } else {
-	// append files
-	$.each(uploadFiles, function(index, file){
-	uploadFilesList.push(file);
-	// document format
-	var docFormat = getDocumentFormat(file.name);
-	// convert to proper size
-	var new_size = file.size + ' Bytes';
-	if((file.size / 1024 / 1024) > 1){
-	new_size = (Math.round((file.size / 1024 / 1024) * 100) / 100) + ' MB';
-	}else if((file.size / 1024) > 1){
-	new_size = (Math.round((file.size / 1024) * 100) / 100) + ' KB';
-	}
-	// append document
-	table.append('<div class="swiper-container">'+	
-					'<div class="swiper-wrapper">'+	
-						'<div class="swiper-slide">'+
-							'<i class="fa ' + docFormat.icon + '"></i>'+
-							'<div class="qv-filetree-name" data-uploaded="false">'+
-								'<div class="qv-file-name">' + file.name + '</div>'+ 
-								'<span id="qv-upload-size">size: ' + new_size +'</span>'+
-								'<span id="qv-upload-size"> type: ' + file.name.split('.').pop() +'</span>'+
-							'</div>'+
-							'<div id="qv-pregress-bar-' + tableRowsNumber + '" class="qv-pregress p0 small green">'+
-								'<div class="slice">'+
-									'<div class="bar"></div>'+
-									'<div class="fill"></div>'+
+		// append files
+		$.each(uploadFiles, function(index, file){
+			uploadFilesList.push(file);
+			// document format
+			var docFormat = getDocumentFormat(file.name);
+			// convert to proper size
+			var new_size = file.size + ' Bytes';
+			if((file.size / 1024 / 1024) > 1){
+				new_size = (Math.round((file.size / 1024 / 1024) * 100) / 100) + ' MB';
+			}else if((file.size / 1024) > 1){
+				new_size = (Math.round((file.size / 1024) * 100) / 100) + ' KB';
+			}
+			// append document
+			table.append('<div class="swiper-container">'+	
+							'<div class="swiper-wrapper">'+	
+								'<div class="swiper-slide">'+
+									'<i class="fa ' + docFormat.icon + '"></i>'+
+									'<div class="qv-filetree-name" data-uploaded="false">'+
+										'<div class="qv-file-name">' + file.name + '</div>'+ 
+										'<span id="qv-upload-size">size: ' + new_size +'</span>'+
+										'<span id="qv-upload-size"> type: ' + file.name.split('.').pop() +'</span>'+
+									'</div>'+
+									'<div id="qv-pregress-bar-' + tableRowsNumber + '" class="qv-pregress p0 small green">'+
+										'<div class="slice">'+
+											'<div class="bar"></div>'+
+											'<div class="fill"></div>'+
+										'</div>'+
+									'</div>'+
+									'<div id="qv-upload-complete-' + tableRowsNumber + '" class="qv-upload-complete"><i class="fa fa-check-circle-o"></i></div>'+
+								'</div>'+	
+								'<div class="swiper-slide qv-desktop swiper-slide-cancel">'+
+									'<div class="files-table-remove">'+
+										'<button class="btn qv-cancel-button"><i class="fa fa-trash-o"></i> Remove</button>'+
+									'</div>'+
 								'</div>'+
 							'</div>'+
-							'<div id="qv-upload-complete-' + tableRowsNumber + '" class="qv-upload-complete"><i class="fa fa-check-circle-o"></i></div>'+
-						'</div>'+	
-						'<div class="swiper-slide qv-desktop swiper-slide-cancel">'+
-							'<div class="files-table-remove">'+
-								'<button class="btn qv-cancel-button"><i class="fa fa-trash-o"></i> Remove</button>'+
-							'</div>'+
-						'</div>'+
-					'</div>'+
-				'</div>');
-	// increase table rows counter after adding new record
-	tableRowsNumber++	
-	});
+						'</div>');
+			// increase table rows counter after adding new record
+			tableRowsNumber++	
+		});
     }		
     $("#qv-upload-button").prop("disabled", false);
 	if(isMobile()){
@@ -1420,45 +1413,45 @@ function uploadDocument(file, index, url = ''){
     formData.append("url", url);
 	formData.append("rewrite", rewrite);
     $.ajax({
-	// callback function which updates upload progress bar
-	xhr: function()
-	{
-	    var xhr = new window.XMLHttpRequest();
-	    // upload progress
-	    xhr.upload.addEventListener("progress", function(event){
-	        if (event.lengthComputable) {
-	            $(".qv-modal-close-action").off('click');
-	            $("#qv-open-document").prop("disabled", true);
-		        // increase progress
-		        $("#qv-pregress-bar-" + index).addClass("p"+ Math.round(event.loaded / event.total * 100));
-	            if(event.loaded == event.total){
-					$("#qv-pregress-bar-" + index).fadeOut();
-					$("#qv-upload-complete-" + index).fadeIn();
-					$('.qv-modal-close-action').on('click', closeModal);
-					$("#qv-open-document").prop("disabled", false);
-	            }
-	        }
-	    }, false);
-	    return xhr;
-	},
-	type: 'POST',
-	url: getApplicationPath('uploadDocument'), 
-	data: formData,   
-	cache: false,
-	contentType: false,
-	processData: false,			                      
-	success: function(returnedData) {
-	    if(returnedData.message != undefined){
-	        // open error popup
-	        printMessage(returnedData.message);
-	        return;
-	    }	  
-	},
-	error: function(xhr, status, error) {
-	  var err = eval("(" + xhr.responseText + ")");
-	  console.log(err.Message);
-	}
-    });		
+		// callback function which updates upload progress bar
+		xhr: function()
+		{
+		    var xhr = new window.XMLHttpRequest();
+		    // upload progress
+		    xhr.upload.addEventListener("progress", function(event){
+		        if (event.lengthComputable) {
+		            $(".qv-modal-close-action").off('click');
+		            $("#qv-open-document").prop("disabled", true);
+			        // increase progress
+			        $("#qv-pregress-bar-" + index).addClass("p"+ Math.round(event.loaded / event.total * 100));
+		            if(event.loaded == event.total){
+						$("#qv-pregress-bar-" + index).fadeOut();
+						$("#qv-upload-complete-" + index).fadeIn();
+						$('.qv-modal-close-action').on('click', closeModal);
+						$("#qv-open-document").prop("disabled", false);
+		            }
+		        }
+		    }, false);
+		    return xhr;
+		},
+		type: 'POST',
+		url: getApplicationPath('uploadDocument'), 
+		data: formData,   
+		cache: false,
+		contentType: false,
+		processData: false,			                      
+		success: function(returnedData) {
+		    if(returnedData.message != undefined){
+		        // open error popup
+		        printMessage(returnedData.message);
+		        return;
+		    }	  
+		},
+		error: function(xhr, status, error) {
+		  var err = eval("(" + xhr.responseText + ")");
+		  console.log(err.Message);
+		}
+    });
 }
 
 /**
@@ -1538,9 +1531,9 @@ function clearPassword(){
 		var loadedPages = [];
 		if(totalPagesNumber > 0){
 			$('#qv-panzoom > div').each(function(index, page){
-					if($(page).has(".qv-wrapper").length){
-						loadedPages.push(true);
-					}		
+				if($(page).has(".qv-wrapper").length){
+					loadedPages.push(true);
+				}		
 			});
 			if(loadedPages.length == totalPagesNumber){
 				password = "";
@@ -1583,21 +1576,27 @@ function isPageLoaded(selector) {
 **/
 function getHtmlFileBrowser(){
 	return '<section id="qv-browse-section" class="tab-slider-body">'+
-			'<div id="qv-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>'+					        
-			'<table id="qv-modal-filebroswer" class="qv-modal-table">'+
-			'<thead>'+
-				'<tr>'+
-				'<th class="col-md-1"> </th>'+
-				'<th class="col-md-5">Document</th>'+
-				'<th class="col-md-3">Format</th>'+
-				'<th class="col-md-3">Size</th>'+
-				'</tr>'+
-			'</thead>'+
-			'<tbody>'+
-			// list of files
-			'</tbody>'+
-			'</table>'+
-		'</section>';		
+				'<div id="qv-modal-spinner"><i class="fa fa-circle-o-notch fa-spin"></i> &nbsp;Loading... Please wait.</div>'+					        
+				'<table id="qv-modal-filebroswer" class="qv-modal-table">'+
+					'<thead>'+
+						'<tr>'+
+							'<th class="col-md-1"> </th>'+
+							'<th class="col-md-5">Document</th>'+
+							'<th class="col-md-3">Format</th>'+
+							'<th class="col-md-3">Size</th>'+
+						'</tr>'+
+					'</thead>'+
+					'<tbody>'+
+						'<tr>'+
+						    '<td class="text-center qv-go-up"><i class="fa fa-level-up"></i></td>'+
+						    '<td class="qv-filetree-up qv-go-up">...</td>'+
+						    '<td></td>'+
+						    '<td></td>'+
+						'</tr>'
+						// list of files
+					'</tbody>'+
+				'</table>'+
+			'</section>';		
 }
 	
 /**
@@ -1911,22 +1910,24 @@ JQUERY SCROLL TO PLUGIN
 */
 $.fn.scrollTo = function( target, options, callback ){
 	if(typeof options == 'function' && arguments.length == 2){ callback = options; options = target; }
-		var settings = $.extend({
-			scrollTarget : target,
-			offsetTop    : 50,
-			duration     : 500,
-			zoom         : 100,
-			easing       : 'swing'
-		}, options);
-		return this.each(function(){
-			var scrollPane = $(this);
-			var scrollTarget = (typeof settings.scrollTarget == "number") ? settings.scrollTarget : $(settings.scrollTarget);
-			if(typeof settings.scrollTarget != "number"){
-				var scrollYTop = scrollTarget.offset().top * settings.zoom / 100;
+	var settings = $.extend({
+		scrollTarget : target,
+		offsetTop    : 50,
+		duration     : 500,
+		zoom         : 100,
+		easing       : 'swing'
+	}, options);
+	return this.each(function(){
+		var scrollPane = $(this);
+		var scrollTarget = (typeof settings.scrollTarget == "number") ? settings.scrollTarget : $(settings.scrollTarget);
+		if(typeof settings.scrollTarget != "number"){
+			var scrollYTop = scrollTarget.offset().top * settings.zoom / 100;
+		}
+		var scrollY = (typeof scrollTarget == "number") ? scrollTarget : scrollYTop + scrollPane.scrollTop() - parseInt(settings.offsetTop);
+		scrollPane.animate({scrollTop : scrollY }, parseInt(settings.duration), settings.easing, function(){
+			if (typeof callback == 'function') {
+				callback.call(this);
 			}
-			var scrollY = (typeof scrollTarget == "number") ? scrollTarget : scrollYTop + scrollPane.scrollTop() - parseInt(settings.offsetTop);
-			scrollPane.animate({scrollTop : scrollY }, parseInt(settings.duration), settings.easing, function(){
-			  if (typeof callback == 'function') { callback.call(this); }
 		});
 	});
 }
